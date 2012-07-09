@@ -5,9 +5,12 @@ require 'db.php';
 // connessione all'host
 $db = mysql_connect(MYSQL_HOST, MYSQL_USER, MYSQL_PASSWORD) or die ('Unable to connect. Check your connection parameters.');
 
-//delete the existing database
-$sql = 'DROP DATABASE '.MYSQL_DB.';';
-mysql_query($sql, $db) or die(mysql_error($db));
+//delete the existing database if exists
+if(mysql_select_db(MYSQL_DB)){
+    $sql = 'DROP DATABASE '.MYSQL_DB.';';
+    mysql_query($sql, $db) or die(mysql_error($db));
+    echo 'database dropped<br />';
+}
 
 // creazione del DB
 $sql = 'CREATE DATABASE IF NOT EXISTS '.MYSQL_DB.';';
