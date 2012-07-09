@@ -1,0 +1,77 @@
+h1 {
+    text-align: center;
+    color: black;
+}  
+
+#divContent {
+    padding: 20px;
+    float:right;
+    width:60%;
+}
+
+#ulExt {
+    overflow-y: scroll;
+    height: 74%;
+}
+
+#content {
+    overflow-y: scroll;
+    height: 82%;
+    padding-left:10px;
+    padding-right:10px;
+}
+
+#author {
+    padding-top:10px;
+    padding-left:10px;
+    padding-right:10px;
+    color: #666;
+    font-size: 0.9em;
+    font-family:sans-serif;
+}
+
+#date {
+    padding-left:10px;
+    padding-right:10px;
+    color: #666;
+    font-size: 0.9em;
+    font-family:sans-serif;
+}
+
+.img {
+    height:16px;
+}
+
+.imgLow {
+    height:12px;
+}
+
+#img {
+    float:right;
+    padding:0px;
+    border:none;
+    height:4%;
+    margin-right:0px;
+}
+
+#imgLeft {
+    float:right;
+    padding:0px;
+    border:none;
+    height:4%;
+    margin-right:0px;
+}
+
+#imgRight {
+    float:right;
+    padding:0px;
+    border:none;
+    height:4%;
+    margin-right:0px;
+}
+
+#content a {
+    text-decoration:none;
+    color:#08c;
+    font-weight: bold;
+}

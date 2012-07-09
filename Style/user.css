@@ -1,0 +1,200 @@
+
+#logreg li#liMyPage a{
+    color:white;
+}
+
+
+#title {
+    margin-left: 7%;
+    margin-top: 2%;
+    padding:4px;
+    width: 85%;
+}
+
+#submitId {
+    margin-right: 7%;
+    margin-top: 2%;
+    padding:4px 20px;
+    float:right;
+}
+
+
+#modify input {
+    margin-left: 7%;
+    margin-top: 2%;
+    margin-bottom: 2%;
+    padding:4px;
+}
+
+#modify span {
+    margin-left: 1%;
+
+}
+
+#modify img {	    
+    margin-bottom:-8px;
+}
+
+#submitModify {	    
+    padding:4px 20px;
+}
+
+#dateView {
+    padding-top:10px;
+    padding-left:10px;
+    padding-right:10px;
+    color: #666;
+    font-size: 0.9em;
+    font-family:sans-serif;
+}
+
+#h3location {
+    margin-top: 0px;
+    padding: 0px;
+}
+
+#divHeader {
+    float: top;
+    background-color: black;
+}
+
+#fakeDiv {
+    float:right;
+    margin:10px;
+    margin-bottom:0px;
+    margin-top:14px;
+    padding:0px 20px;
+}
+
+
+#divContent {   
+    float:right;
+}
+
+#divModify {   
+    float:right;
+    width:60%;
+}
+
+#divView {   
+    float:right;
+    width: 60%;
+}
+
+
+#divHidden {
+    background-color: white;
+    margin-left: 7%;
+    margin-right: 7%;
+    margin-top: 2%;
+}
+
+#divTable {
+    margin-left: 7%;
+    margin-right: 7%;
+    margin-top: 2%;	    
+}
+
+#tableModify tr td h3{
+    padding-left: 0px;
+    margin-left:0px;
+    margin-right: 7%;	    
+}
+
+
+#divLocation{
+    background-color: silver;
+    padding-top: 10px;
+    padding-right: 10px;
+    padding-left: 10px;
+    padding-bottom: 1px;
+
+}
+
+#divContent{
+    width: 60%;
+}
+
+#divStatus {   
+    float:right;
+    border-right: thick gray solid;
+    border-left: thick gray solid;
+    border-bottom: thick gray solid;
+    margin-top: 40px;
+}
+
+#divContentView {
+
+    float:right;
+    border-right: thick silver solid;
+    border-left: thick silver solid;
+    border-bottom: thick silver solid;
+    margin-right: 10px;
+}
+
+#divIndex {
+    margin-top: 20px;
+}
+
+
+#content {
+    margin-left: 10px;
+    margin-right:10px;
+}
+
+#contentView {
+    overflow-y: scroll;
+    padding-left:10px;
+    padding-right:10px;
+}
+
+#status {
+    margin-left: 10px;
+    margin-right:10px;
+}
+
+#modify {
+    margin-left: 10px;
+    margin-right:10px;
+}
+
+
+#titleView {
+    margin-bottom: 0px;
+}
+
+#ulLocation {
+    overflow-y: scroll;
+    height: 30%;
+    background-color: gray;
+    padding-right: 30px;
+    padding-left: 30px;
+    padding-top:10px;
+    padding-bottom:10px;	    
+    background-color:white;	    
+}
+
+#ulPending {
+    overflow-y: scroll;
+}
+
+#titleIndex {
+    background-color:white;
+}
+
+.img {
+    height:16px;
+}
+
+#img {	    
+    float:right;
+    padding:0px;
+    border:none;
+    height:4%;
+    margin-right:0px;
+}
+
+.imgWait {
+    height:25px;	    
+}
+

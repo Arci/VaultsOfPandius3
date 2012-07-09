@@ -1,0 +1,267 @@
+@charset "utf-8";
+/* CSS Document */
+
+body{
+    margin:0px;
+    padding:0px;
+    background-image:url(images/body_bg.png);
+}
+
+h3{
+    padding-left: 7%;
+    margin-bottom: 0px;
+}
+
+h2{
+    padding-left: 7%;
+    margin-bottom: 0px;
+}
+
+
+#hrdiv {
+    height: 0px;
+    margin: 0px 20px 0px 0px;
+    border-top: 1px solid #999;
+    width: 40%;
+    float:right;
+}
+
+
+.blackSpace{
+    height:15px;
+    background-color:#333;
+}
+
+#logo{
+    float:left;
+    margin-left: -60px;
+}
+
+#menu{
+
+    height:25px;
+    text-align:right;
+    color:black;
+    background-color: #333;
+    padding-right:15px;
+    padding-top: 10px;
+}
+
+#underline{
+
+    height:5px;
+    text-align:right;
+    color:darkgray;
+    background-color: #08c;
+    clear:both;
+}
+
+#logreg{
+    background-color:#333;
+    text-align:right;
+    padding-top:0px;
+    padding-bottom:10px;
+    padding-right:15px;
+
+}
+
+#logreg ul{
+    list-style-type:none;
+    margin:0px;
+    padding:0px;
+    font-family:"Myriad Pro", Arial, sans-serif;
+    padding-top:0px;
+
+}
+
+#logreg li{
+    display:inline;
+    padding-left:10px;
+    padding-right:10px;
+}
+
+#logreg li a{
+    text-decoration:none;
+    color:#999;
+    font-weight: bold;
+    font-size: 0.9em;
+    font-family:sans-serif;
+
+}
+
+#logreg li span{
+    color:#08c;
+    font-weight: bold;
+    font-size: 0.9em;
+    font-family:sans-serif;
+
+}
+
+#logreg a:hover{
+    color: white;
+}
+
+#menu ul{
+    list-style-type:none;
+    margin:0px;
+    padding:0px;
+    font-family:"Myriad Pro", Arial, sans-serif;
+    padding-top:5px;
+    font-size:16px;
+
+}
+
+#menu li{
+    display:inline;
+    padding-left:10px;
+    padding-right:10px;
+
+}
+
+#menu li a{
+    text-decoration:none;
+    color:#999;
+    font-weight: bold;
+    font-size: 0.9em;
+    font-family:sans-serif;
+}
+
+
+#menu a:hover{
+    color: #ffffff;
+}
+
+
+/*	footer	*/ 
+
+#footer {
+    float: left;
+    width: 100%;
+    color:#999999;
+    font-family:"Myriad Pro", Arial, sans-serif;
+    font-size:12px;
+    text-align:center;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+#central{
+    padding:0px;
+    width:90%;
+    margin:0px auto;
+}
+
+.shadowbox {
+    -moz-box-shadow: 2px 2px 3px #000;
+    -webkit-box-shadow: 2px 2px 3px #000;
+    box-shadow: 2px 2px 3px #000;
+    border-style:solid;
+    border-color:#08c;
+    border-width:2px;
+    margin:10px;
+    margin-bottom:0px;
+    background-image:url(images/content_bg.png);
+    padding:0px 20px;
+}
+
+div.hr {
+    height: 1px;
+    margin: 2px auto;
+    border-top: 1px solid #999;
+    width: 90%;
+}
+
+
+#divMainIndex ul {  
+    list-style-type:none;
+    padding-left:7%;
+
+}
+
+#divMainIndex a {  
+    text-decoration:none;
+    color: #666;
+    font-weight: normal;
+    font-size: 0.9em;
+    font-family:sans-serif;
+}
+
+#divMainIndex a:hover { 
+    text-decoration: underline;
+    color: #666;
+}
+
+#divIndex ul {
+    list-style-type:none;
+    padding-left:7%;  
+}
+
+#divIndex a {
+    text-decoration:none;
+    color: #666;
+    font-weight: normal;
+    font-size: 0.9em;
+    font-family:sans-serif;
+} 
+
+
+#divLogin {
+    float: none; 
+    height:250px; 
+    width:300px; 
+    position:absolute;
+    top:94px;
+    right:140px;
+    -moz-box-shadow: 2px 2px 3px #000;
+    -webkit-box-shadow: 2px 2px 3px #000;
+    box-shadow: 2px 2px 3px #000;
+    border-style:solid;
+    border-color:#08c;
+    border-width:2px;
+    margin:10px;
+    margin-bottom:0px;
+    background-color:#EEE;
+    background-image:url(images/Galleonbg.png);
+    padding:0px 20px;	
+
+
+}
+
+#divLogin h3 {
+    padding-left: 7%;
+}
+
+#divLogin input {
+    margin-left: 7%;
+    margin-top: 2%;
+    margin-bottom: 2%;
+}
+
+
+#divLogout {
+    float: none; 
+    height:60px; 
+    width:70px; 
+    position:absolute;
+    top:94px;
+    right:15px;
+    border-style:solid;	
+    border-color:#08c;
+    border-width:5px;
+    margin:auto;
+    border-top:none;
+    background-color:#333;
+}
+
+#wait {
+    height:25px;	    	 
+}
+
+
+#mainStaticContent{
+    width:90%;
+    height: 78%;
+    width:90%;
+    margin-left:auto;
+    margin-right:auto;
+}
