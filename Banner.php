@@ -1,7 +1,9 @@
 <div id="main">
     <div id="header">
         <div id="logobar">
+			<a href="indexPage.php">
             <img src="images/logo_1.png" id="logo">
+			</a>
         </div>		
         <div id="menu">
             <ul>
