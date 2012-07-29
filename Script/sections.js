@@ -367,6 +367,7 @@ function buildIndexList(oXmlDom, element, idIndex, external) {
 function CreateIndexLevel2(oXmlDom, elementId) {   
     var aLink = selectNodes(oXmlDom, "//ELEMENT");
     var ul = document.createElement("ul");
+	ul.setAttribute("id","ulMenu1");
     for (var i=0; i<aLink.length; i++){
         var li = document.createElement("li");
         li.setAttribute("id","li"+aLink[i].getAttribute("id"));
@@ -405,7 +406,7 @@ function link(){
             aLinks[i].setAttribute("OnClick", "changeContent('"+href.toString()+"')");
         } else if (t2==-1){
             var file=href.substring (href.lastIndexOf("/", 0)+1);
-            aLinks[i].setAttribute("href", "/data/"+file);
+            aLinks[i].setAttribute("href", "data/"+file);
         }
         
     }
