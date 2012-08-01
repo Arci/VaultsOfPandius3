@@ -59,7 +59,6 @@ $sql = 'CREATE TABLE IF NOT EXISTS temp_users (
     ENGINE=MyISAM';
 mysql_query($sql, $db) or die(mysql_error($db));
 
-
 // creazione tabella "contentPage"
 $sql = 'CREATE TABLE IF NOT EXISTS content_page (
 	id		INTEGER UNSIGNED	NOT NULL AUTO_INCREMENT,
@@ -76,6 +75,20 @@ $sql = 'CREATE TABLE IF NOT EXISTS content_page (
 	  ON UPDATE CASCADE,
 	INDEX (author, submit_date),
         FULLTEXT INDEX (title)
+  )
+  ENGINE=MyISAM';
+mysql_query($sql, $db) or die(mysql_error($db));
+
+//creazione tabella "content_page_author"
+$sql = 'CREATE TABLE IF NOT EXISTS content_page_author (
+	contentPage            INTEGER UNSIGNED        NOT NULL,
+	author		INTEGER UNSIGNED	NOT NULL,
+	FOREIGN KEY (author) REFERENCES users(id)
+          ON DELETE CASCADE
+	  ON UPDATE CASCADE,
+        FOREIGN KEY (contentPage) REFERENCES content_page(id)
+	  ON DELETE CASCADE
+	  ON UPDATE CASCADE
   )
   ENGINE=MyISAM';
 mysql_query($sql, $db) or die(mysql_error($db));

@@ -240,7 +240,16 @@ function fillContent(id){
                 title.innerHTML = getText(aTitle[0]);
                 infoContent.push(getText(aTitle[0]));
                 var aAuthor = selectNodes(oXHR2.responseXML, "//AUTHOR");
-                author.innerHTML +="<i>Author: </i><b>"+getText(aAuthor[0])+"</b>";
+		
+		//document.write(aAuthor.length);
+		var auth = "";
+		for(var i = 0; i < aAuthor.length; i++){
+		    auth +=getText(aAuthor[i])+", ";
+		    if(i == aAuthor.length - 1){
+			auth = auth.substring(0,auth.length-2);
+		    }
+		}
+                author.innerHTML +="<i>Author: </i><b>"+auth+"</b>";
                 infoContent.push(getText(aAuthor[0]));
                 var aDate = selectNodes(oXHR2.responseXML, "//DATE");
                 date.innerHTML +="<i>Date: </i>"+getText(aDate[0]);
