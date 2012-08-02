@@ -855,27 +855,9 @@ function extractContent($ref, $db, $dom, $domHTML){
       //$nodes = $xpath->query("//h2", $domHTML->documentElement);
       $nodes = $xpath->query("//title", $domHTML->documentElement);
       $title = $nodes->item(0)->nodeValue;
-
-      $nodes = $xpath->query("//a[contains(@href,'authors')]", $domHTML->documentElement);
-      $name = trim($nodes->item(0)->nodeValue);
-
-      $sql = 'SELECT id 
-	  FROM 
-	      users 
-	  WHERE 
-	      name="'.mysql_real_escape_string($name, $db).'"';
-      $result = mysql_query($sql, $db);
-
-      if (mysql_num_rows($result) == 1) {
-	  //ok
-	  $row = mysql_fetch_array($result);
-	  $author = $row['id'];
-      }  else {
-	  //errore    
-      }
-      mysql_free_result($result);
-
       
+      //aggiungo l'articolo
+      //TODO data prelevata dal parser
       $sql = 'INSERT IGNORE INTO content_page 
 	      (href, title, author, submit_date, is_published, text)
 	  VALUES
@@ -886,9 +868,39 @@ function extractContent($ref, $db, $dom, $domHTML){
 	      TRUE,
 	      "'.mysql_real_escape_string($text, $db).'")';
       mysql_query($sql, $db) or die(mysql_error($db));
+      $lastInseredContent = mysql_insert_id();
+
+      //scorro tutti gli autori e li aggungo
+      $nodes = $xpath->query("//a[contains(@href,'authors')]", $domHTML->documentElement);
       
+      foreach($nodes as $node){
+	    $name = trim($node->nodeValue);
+
+	    $sql = 'SELECT id 
+	      FROM 
+		users 
+	      WHERE 
+		name="'.mysql_real_escape_string($name, $db).'"';
+	    $result = mysql_query($sql, $db);
+      
+	    if (mysql_num_rows($result) == 1) {
+		//ok
+		$row = mysql_fetch_array($result);
+		$author = $row['id'];
+	    }  else {
+		//errore    
+	    }
+	    mysql_free_result($result);
+
+	    $sql = 'INSERT IGNORE INTO content_page_author
+		(contentPage, author)
+		VALUES
+		("'.$lastInseredContent.'",
+		"'.$author.'")';
+	    mysql_query($sql, $db) or die(mysql_error($db));
+      }
+    
       return true;
-  
 }
 
 
