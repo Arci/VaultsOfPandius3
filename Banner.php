@@ -34,8 +34,8 @@
                 if ($_SESSION['access_level'] == 3) {
                     echo '<li id="liAdminPage"><a href="AdminPageCMS.php">AdminPage</a></li>';
                 }
-                echo '<li><a id="aLogout" href="#" onclick="logout()">Logout</a></li>
-				  </ul>';
+		echo '<li id="liUpload"><a href="uploadFile.php">Upload FIle</a></li>';
+                echo '<li><a id="aLogout" href="#" onclick="logout()">Logout</a></li></ul>';
             } else {
 
                 echo '<ul>

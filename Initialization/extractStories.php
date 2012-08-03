@@ -406,7 +406,6 @@ function extractContent($ref, $db, $dom, $domHTML){
       $title = $nodes->item(0)->nodeValue;
       
       //aggiungo l'articolo
-      //TODO data prelevata dal parser
       $sql = 'INSERT IGNORE INTO content_page 
 	      (href, title, author, submit_date, is_published, text)
 	      VALUES

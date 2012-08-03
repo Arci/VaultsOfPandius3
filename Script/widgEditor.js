@@ -1196,8 +1196,8 @@ function widgToolbarAction()
 			break;
 			
 		case "image":
-			var theImage = prompt("Enter the location for this image:", "");
-			
+			var theImage = "./data/";
+			theImage += prompt("Enter the name of the image:", "");
 			if (theImage != null && theImage != "")
 			{
 				var theAlt = prompt("Enter the alternate text for this image:", "");
@@ -1214,7 +1214,6 @@ function widgToolbarAction()
 					theRange = theSelection.createRange();
 					theRange.collapse(false);
 					theRange.pasteHTML("<img alt=\"" + theAlt + "\" src=\"" + theImage + "\" />");
-					
 					break;
 				}
 				/* Mozilla selections */
