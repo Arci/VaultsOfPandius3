@@ -43,7 +43,8 @@
 		  FROM 
 		      index_2_content JOIN content_page ON id_target_content_page=content_page.id  
 		  WHERE 
-		      id_start_index_page="'.$sID.'" AND link_name NOT LIKE "%&%" AND is_published IS FALSE';
+		      id_start_index_page="'.$sID.'" AND link_name NOT LIKE "%&%" AND is_published IS FALSE
+		  ORDER BY link_name ASC';
 
 	      $result = mysql_query($sql, $db);    
 	      while ($row = mysql_fetch_array($result)) {
@@ -59,7 +60,8 @@
 		FROM
 		    index_2_content
 		WHERE
-		    id_start_index_page="'.$sID.'" AND link_name NOT LIKE "%&%"';
+		    id_start_index_page="'.$sID.'" AND link_name NOT LIKE "%&%"
+		ORDER BY link_name ASC';
 	    $result = mysql_query($sql, $db);    
 	    while ($row = mysql_fetch_array($result)) {
 		    if ($row['id_target_content_page']==NULL){
@@ -84,7 +86,8 @@
 		  FROM 
 		      index_2_content 
 		  WHERE 
-		      id_start_index_page="'.$sID.'" AND id_target_index_page IS NOT NULL AND link_name NOT LIKE "%&%"';
+		      id_start_index_page="'.$sID.'" AND id_target_index_page IS NOT NULL AND link_name NOT LIKE "%&%"
+		  ORDER BY link_name ASC';
 	      $result = mysql_query($sql, $db);
 	      while ($row = mysql_fetch_array($result)) {    
 		  $GLOBALS["link_id"][] = $row['id_target_index_page'];
@@ -98,8 +101,8 @@
 		  FROM 
 		      index_2_content JOIN content_page ON id_target_content_page=content_page.id  
 		  WHERE 
-		      author="'.$sAuthor.'" AND id_start_index_page="'.$sID.'" AND link_name NOT LIKE "%&%" AND is_published IS FALSE';
-
+		      author="'.$sAuthor.'" AND id_start_index_page="'.$sID.'" AND link_name NOT LIKE "%&%" AND is_published IS FALSE
+		  ORDER BY link_name ASC';
 	      $result = mysql_query($sql, $db);    
 	      while ($row = mysql_fetch_array($result)) {
 		  $resultQuery = $resultQuery.'<LINK id="'.$row['id_target_content_page'].'" type="content">'.$row['link_name'].'</LINK>';
@@ -114,7 +117,8 @@
 		  FROM 
 		      index_2_content 
 		  WHERE 
-		      id_start_index_page="'.$sID.'" AND id_target_index_page IS NOT NULL AND link_name NOT LIKE "%&%"';
+		      id_start_index_page="'.$sID.'" AND id_target_index_page IS NOT NULL AND link_name NOT LIKE "%&%"
+		  ORDER BY link_name ASC';
 	      $result = mysql_query($sql, $db);
 	      while ($row = mysql_fetch_array($result)) {
 		  $GLOBALS["link_id"][] = $row['id_target_index_page'];
@@ -128,8 +132,8 @@
 		  FROM 
 		      index_2_content JOIN content_page ON id_target_content_page=content_page.id  
 		  WHERE 
-		      author="'.$sAuthor.'" AND id_start_index_page="'.$sID.'" AND link_name NOT LIKE "%&%" AND is_published IS TRUE';
-
+		      author="'.$sAuthor.'" AND id_start_index_page="'.$sID.'" AND link_name NOT LIKE "%&%" AND is_published IS TRUE
+		  ORDER BY link_name ASC';
 	      $result = mysql_query($sql, $db);    
 	      while ($row = mysql_fetch_array($result)) {
 		  $resultQuery = $resultQuery.'<LINK id="'.$row['id_target_content_page'].'" type="content">'.$row['link_name'].'</LINK>';
@@ -156,7 +160,8 @@
 	    FROM 
 		content_page JOIN index_2_content ON content_page.id=id_target_content_page 
 	    WHERE 
-		author="'.$sAuth.'" AND id_start_index_page="'.$sIdSub.'" AND link_name NOT LIKE "%&%" AND is_published IS TRUE';
+		author="'.$sAuth.'" AND id_start_index_page="'.$sIdSub.'" AND link_name NOT LIKE "%&%" AND is_published IS TRUE
+	    ORDER BY link_name ASC';
 	$result = mysql_query($sql, $db);    	  
 	if ($row = mysql_fetch_array($result)) {
 	  return true;    
@@ -193,7 +198,8 @@
 	    FROM 
 		content_page JOIN index_2_content ON content_page.id=id_target_content_page 
 	    WHERE 
-		author="'.$sAuth.'" AND id_start_index_page="'.$sIdSub.'" AND link_name NOT LIKE "%&%" AND is_published IS FALSE';
+		author="'.$sAuth.'" AND id_start_index_page="'.$sIdSub.'" AND link_name NOT LIKE "%&%" AND is_published IS FALSE
+	    ORDER BY link_name ASC';
 	$result = mysql_query($sql, $db);    	  
 	if ($row = mysql_fetch_array($result)) {
 	  return true;    
@@ -229,7 +235,8 @@
 	    FROM 
 		content_page JOIN index_2_content ON content_page.id=id_target_content_page 
 	    WHERE 
-		id_start_index_page="'.$sIdSub.'" AND link_name NOT LIKE "%&%" AND is_published IS FALSE';
+		id_start_index_page="'.$sIdSub.'" AND link_name NOT LIKE "%&%" AND is_published IS FALSE
+	    ORDER BY link_name ASC';
 	$result = mysql_query($sql, $db);    	  
 	if ($row = mysql_fetch_array($result)) {
 	  return true;    
