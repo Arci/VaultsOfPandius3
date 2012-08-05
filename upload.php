@@ -1,6 +1,6 @@
 <?php
 
-define(UP_DIR,"./data/");
+define('UP_DIR',"./data/");
 
 class Upload{
 

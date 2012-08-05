@@ -1,2 +1,2 @@
-Vaults of Pandium 3
+Vaults of Pandius 3
 ===================
