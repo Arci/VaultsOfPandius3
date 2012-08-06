@@ -5,23 +5,24 @@ h1 {
 
 #divContent {
     padding: 20px;
+	height: 65%;
     float:right;
     width:60%;
 }
 
 #ulMenu1 {
 	overflow-y: scroll;
-	height: 74%;
+	height: 14%;
 }
 
 #ulExt {
     overflow-y: scroll;
-    height: 74%;
+    height: 30%;
 }
 
 #content {
     overflow-y: scroll;
-    height: 82%;
+    height: 78%;
     padding-left:10px;
     padding-right:10px;
 }
