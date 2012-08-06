@@ -1039,7 +1039,13 @@ function explore($dom, $fatherElement, $fatherNode){
 		    if ($childNode->nodeType != 8){
 		      //i commenti mi danno problemi quindi non li considero
 		      $childElement = $dom->createElement($childNode->nodeName);
-		      $fatherElement->appendChild($childElement);
+			  // aggiunta del campo src ai tag img
+			  if($childNode->nodeName == "img"){
+				foreach ($childNode->attributes as $attribute){
+				$childElement->setAttribute($attribute->name, "data/".$attribute->value);
+				}
+			  }
+			  $fatherElement->appendChild($childElement);
 		    }
 		  }	     	      
 	      }  
