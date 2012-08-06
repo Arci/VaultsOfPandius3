@@ -829,7 +829,7 @@ function extractContent($ref, $db, $dom, $domHTML){
             
       $xpath = new DomXPath($domHTML);
 
-      $nodes = $xpath->query("//p", $domHTML->documentElement);
+      $nodes = $xpath->query("//p | //ul", $domHTML->documentElement);
       $nodesA = $xpath->query("//a[contains(@href,'html') and not(contains(@href,'authors')) and not(contains(@href,'#'))]", $domHTML->documentElement);
       
       
@@ -843,12 +843,20 @@ function extractContent($ref, $db, $dom, $domHTML){
       }
       
 //      echo 'CONTENT: P = '.$nodes->length.', A = '.$nodesA->length.' --> '.$ref.'<br/>';
-            
+
       for ($i=1; $i<$nodes->length; $i++) {        
 	  $singleNode = $nodes->item($i);
-	  $p = $dom->createElement('p');    	  
-	  explore($dom, $p, $singleNode);	  
-	  $dom->appendChild($p);
+	  if($singleNode->nodeName== "p"){
+	    echo "a paragraph<br/>";
+	    $p = $dom->createElement('p');    	  
+	    explore($dom, $p, $singleNode);
+	    $dom->appendChild($p);
+	  }else if($singleNode->nodeName == "ul"){
+	    echo "a list<br/>";
+	    $ul = $dom->createElement('ul');    	  
+	    explore($dom, $ul, $singleNode);
+	    $dom->appendChild($ul);
+	  }
       }
       $text = $dom->saveHTML();
       
