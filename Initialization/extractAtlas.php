@@ -847,12 +847,11 @@ function extractContent($ref, $db, $dom, $domHTML){
       for ($i=1; $i<$nodes->length; $i++) {        
 	  $singleNode = $nodes->item($i);
 	  if($singleNode->nodeName== "p"){
-	    echo "a paragraph<br/>";
 	    $p = $dom->createElement('p');    	  
 	    explore($dom, $p, $singleNode);
 	    $dom->appendChild($p);
 	  }else if($singleNode->nodeName == "ul"){
-	    echo "a list<br/>";
+	    echo "found list<br/>";
 	    $ul = $dom->createElement('ul');    	  
 	    explore($dom, $ul, $singleNode);
 	    $dom->appendChild($ul);
