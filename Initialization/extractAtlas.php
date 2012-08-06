@@ -829,7 +829,7 @@ function extractContent($ref, $db, $dom, $domHTML){
             
       $xpath = new DomXPath($domHTML);
 
-      $nodes = $xpath->query("//p | //ul", $domHTML->documentElement);
+      $nodes = $xpath->query("//p | //ul | //table", $domHTML->documentElement);
       $nodesA = $xpath->query("//a[contains(@href,'html') and not(contains(@href,'authors')) and not(contains(@href,'#'))]", $domHTML->documentElement);
       
       
@@ -851,10 +851,14 @@ function extractContent($ref, $db, $dom, $domHTML){
 	    explore($dom, $p, $singleNode);
 	    $dom->appendChild($p);
 	  }else if($singleNode->nodeName == "ul"){
-	    echo "found list<br/>";
 	    $ul = $dom->createElement('ul');    	  
 	    explore($dom, $ul, $singleNode);
 	    $dom->appendChild($ul);
+	  }else if($singleNode->nodeName == "table"){
+	    echo "table<br/>";
+	    $table = $dom->createElement('table');    	  
+	    explore($dom, $table, $singleNode);
+	    $dom->appendChild($table);
 	  }
       }
       $text = $dom->saveHTML();
@@ -1026,7 +1030,7 @@ function exploreIndexH2($dom, $fatherElement, $fatherNode){
 
 function explore($dom, $fatherElement, $fatherNode){
             
-      foreach ($fatherNode->childNodes as $childNode){  
+      foreach ($fatherNode->childNodes as $childNode){
 	      if($childNode->hasChildNodes()){
 		  $childElement = $dom->createElement($childNode->nodeName);
 		  if($childNode->hasAttributes()){
