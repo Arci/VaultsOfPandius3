@@ -27,16 +27,24 @@
         
         $id = $_GET['id'];
         
-        $sql="SELECT c.id , c.title, c.submit_date, u.name, c.text FROM content_page c, users u where c.author=u.id and c.id='$id'";
+        $sql="SELECT c.id , c.title, u.name, c.submit_date, c.text FROM content_page c, content_page_author a, users u WHERE (((c.id='$id') AND (a.contentPage=c.id)) AND u.id=a.author)";
         $result = mysql_query($sql, $db);
-        $result = mysql_fetch_object($result);
+		$author = $result;
+		$result = mysql_fetch_object($result);
         ?>
 
         <div id="central">    
-            <div class="shadowbox">	    
+            <div class="shadowbox" style="height: 71%;">	    
                 <h2 id=title ><?php echo $result->title ?></h2>
                 <div class="hr"></div>
-                <div id=author><?php echo $result->name ?></div>
+                <div id=author>
+					<?php
+						echo $result->name;
+						while ($row = mysql_fetch_object($author)){
+							echo ", " . $row->name;
+						}
+					?>
+				</div>
                 <div id=date><?php echo $result->submit_date ?></div>
                 <div class="hr"></div>
                 <div id=content ><?php echo $result->text ?></div>
