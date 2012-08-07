@@ -1,0 +1,21 @@
+@charset "utf-8";
+
+
+#result{
+	margin-top: 0%;
+	float: left;
+	width: 25%;
+	padding: 20px;
+	overflow: auto;
+	height: 57%;
+}
+
+#field{
+	margin-top: 1%;
+	margin-left: 3%;
+	width: 25%;
+}
+
+#divContent{
+	height: 61%;
+}
