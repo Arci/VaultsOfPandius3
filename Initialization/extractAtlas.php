@@ -19,7 +19,7 @@ $br = 4;
 
 
 // pagina da cui estrarre il contenuto
-echo "----> ATLAS <----";
+echo "----> ATLAS <----<br/>";
 extractFirstPage('atlas.html', $db, $dom, $domHTML);
 
 cleanIndexTable($db);
@@ -314,15 +314,24 @@ function extractBlockquote($iref, $db, $dom, $domHTML){
       //estraggo le sotto-sezioni
       $nodes = $xpath->query("//h2", $domHTML->documentElement);
       //echo $nodes->length;      
-      
       $subNodes = array();
       $nodesText = array();
-      for ($j=0; $j<$nodes->length; $j++) {       	  
+      
+      for ($j=0; $j<$nodes->length; $j++) {
+	//if($j==0)
+	//  $subNodes[]= $xpath->query("//blockquote/blockquote[position()=1]/a[(contains(@href,'html') or(contains(@href,'pdf')) or(contains(@href,'jpg'))) and not(contains(@href,'authors')) and not(contains(@href,'#'))]", $domHTML->documentElement);
+	//else
 	  $subNodes[] = $xpath->query("//blockquote/blockquote[position()=".($j+1)."]/a[contains(@href,'html') and not(contains(@href,'authors')) and not(contains(@href,'#'))]", $domHTML->documentElement);
-	  $nodesText[] = $xpath->query("//blockquote/blockquote[position()=".($j+1)."]", $domHTML->documentElement);	
+	$nodesText[] = $xpath->query("//blockquote/blockquote[position()=".($j+1)."]", $domHTML->documentElement);	
       }
-           
-            
+      
+      $list = array();
+      for ($j=0; $j<$nodes->length; $j++){
+	for ($i=0; $i<$nodesText[$j]->length; $i++){
+	  $list[$j] = explode(".",$nodesText[$j]->item($i)->nodeValue);
+	}
+      }
+      
       for ($j=0; $j<$nodes->length; $j++) {       
 	  $singleNode = $nodes->item($j);
 	  
@@ -386,12 +395,23 @@ function extractBlockquote($iref, $db, $dom, $domHTML){
 	    $singleSubNode = $subNodes[$j]->item($z);  
 	    $ref = $singleSubNode->attributes->getNamedItem('href')->nodeValue;
 	    $name = $singleSubNode->nodeValue;
+	    //recupero informazioni from e date
+	    $info = array();
+	    foreach($list as $element){
+	      foreach($element as $article){
+		if(strstr($article,$name)){
+		  //echo "list selected: ".$article."<br/>";
+		  $info = extractInfo($article,$name);
+		}
+	      }
+	    }
+	    
 	    if (!(in_array($ref, $GLOBALS['global']))) {
 		  //inserisco il ref nell'array'
 		  $GLOBALS['global'][] = $ref;
 		  
 		  // METTO QUI LA CHIAMATA A extractContentPage.php //
-		  if (extractContent($ref, $db, $dom, $domHTML)){
+		  if (extractContent($ref, $db, $dom, $domHTML, $info)){
 			    
 		      // *** LA PAGINA ESAMINATA SI è RIVELATA EFFETTIVAMENTE UNA PAGINA CONTENT ***
 		      // ottengo l'id della pagina content
@@ -452,13 +472,41 @@ function extractBlockquote($iref, $db, $dom, $domHTML){
 		}
 	    }
 	    //fine parte comune
-      }
-      
-      
-      
-      
+      } 
 }
 
+
+function extractInfo($article,$name){
+    $info = array( 'from' => null,'date' => null);
+    if(strstr($article,'from') && strstr($article,'posted')){
+	/*DEBUG*/$fullName = trim(substr($article,0,strpos($article,"from")));
+	$info['from'] = trim(substr($article,strpos($article,"from")+4,(strpos($article,"posted")-strpos($article,"from")-4)));
+	$info['date'] = date('Y-m-d',strtotime(trim(substr($article,strpos($article,"posted")+6))));
+    }else if(strstr($article,'from') && !strstr($article,'posted')){
+	/*DEBUG*/$fullName = trim(substr($article,0,strpos($article,"from")));
+	$from = trim(substr($article,strpos($article,"from")+4));
+	if(strstr($from,"the Mystara Message Board")){
+	    $date = substr($from,25);
+	}else if(strstr($from,"The Piazza")){
+	    $date = substr($from,10);
+	}else if(strstr($from,"the Mystara Mailing List")){
+	    $date = substr($from,24);		
+	}
+	$info['from'] = substr($from,0,(strlen($from)-strlen($date)));
+	$info['date'] = date('Y-m-d',strtotime(trim($date)));
+    }else if(strstr($article,'current as of')){
+	/*DEBUG*/ $fullName = trim(substr($article,0,strpos($article,"current as of")));
+	$info['date']= date('Y-m-d',strtotime(trim(substr($article,strpos($article,"current as of")+13))));
+    }
+    //START DEBUG
+    if(strstr($fullName,$name)){
+      echo "<b>name:</b> ".$name." <b>from:</b> ".$info['from']." <b>date:</b> ".$info['date']."<br/>";
+    }else{
+      echo "<b>name:</b> ".$name."<br/>		";
+    } //END DEBUG
+    
+    return $info;
+}
 
 function extractBlockquoteFake($iref, $db, $dom, $domHTML, $fakeref){
   
@@ -818,7 +866,7 @@ function extractIndex($iref, $db, $dom, $domHTML){
 
 
 
-function extractContent($ref, $db, $dom, $domHTML){
+function extractContent($ref, $db, $dom, $domHTML, $info){
       
       $dom = new DomDocument();
       // open if file exists
@@ -855,7 +903,6 @@ function extractContent($ref, $db, $dom, $domHTML){
 	    explore($dom, $ul, $singleNode);
 	    $dom->appendChild($ul);
 	  }else if($singleNode->nodeName == "table"){
-	    echo "table<br/>";
 	    $table = $dom->createElement('table');    	  
 	    explore($dom, $table, $singleNode);
 	    $dom->appendChild($table);
@@ -866,17 +913,39 @@ function extractContent($ref, $db, $dom, $domHTML){
       //$nodes = $xpath->query("//h2", $domHTML->documentElement);
       $nodes = $xpath->query("//title", $domHTML->documentElement);
       $title = $nodes->item(0)->nodeValue;
-      
+            
       //aggiungo l'articolo
-      $sql = 'INSERT IGNORE INTO content_page 
-	      (href, title, author, submit_date, is_published, text)
+      if($info['date'] != null && $info['from'] != null){
+	$sql = 'INSERT IGNORE INTO content_page 
+	      (href, title, source, submit_date, publish_date, is_published, text)
 	  VALUES
 	      ("'.$ref.'",
 	      "'.mysql_real_escape_string($title, $db).'",
-	      "'.$author.'",
+	      "'.$info['from'].'",
+	      "'.date('Y-m-d').'",
+	      "'.$info['date'].'",
+	      TRUE,
+	      "'.mysql_real_escape_string($text, $db).'")';
+      }else if($info['date'] != null && $info['from'] == null){
+	$sql = 'INSERT IGNORE INTO content_page 
+	      (href, title, submit_date, publish_date, is_published, text)
+	  VALUES
+	      ("'.$ref.'",
+	      "'.mysql_real_escape_string($title, $db).'",
+	      "'.date('Y-m-d').'",
+	      "'.$info['date'].'",
+	      TRUE,
+	      "'.mysql_real_escape_string($text, $db).'")';
+      }else{
+	$sql = 'INSERT IGNORE INTO content_page 
+	      (href, title, submit_date, is_published, text)
+	  VALUES
+	      ("'.$ref.'",
+	      "'.mysql_real_escape_string($title, $db).'",
 	      "'.date('Y-m-d').'",
 	      TRUE,
 	      "'.mysql_real_escape_string($text, $db).'")';
+      }
       mysql_query($sql, $db) or die(mysql_error($db));
       $lastInseredContent = mysql_insert_id();
 
