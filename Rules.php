@@ -15,7 +15,7 @@ http://www.w3.org/TR/html4/loose.dtd>
 	  
 	  #content {
 	      overflow-y: scroll;
-	      height: 92%;
+	      height: 93%;
 	      padding-left:10px;
 	      padding-right:10px;
 	      margin-top:20px;
