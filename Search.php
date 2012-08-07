@@ -18,23 +18,19 @@ http://www.w3.org/TR/html4/loose.dtd>
     <body>       
 
         <?php include 'Banner.php' ?>
-			<div id="selected">
-				<form>
-					<input id="field" type="text">
-					<input id="button" type="button" value="Search" onclick="search(field.value)">
-					<div id="divContent" class="shadowbox" style="visibility: hidden">	    
-						<h2 id=title >Content</h2>
-						<div class="hr"></div>
-						<div id=author></div>
-						<div id=date></div>
-						<div class="hr"></div>
-						<div id=content></div>
-					</div>
-				</form>
-			</div>
-			<div id="central">
-				<div id="result" class="shadowbox" style="visibility: hidden ">
+			<div>
+				<input id="field" type="text">
+				<input id="button" type="button" value="Search" onclick="search(field.value)">
+				<div id="divContent" class="shadowbox" style="visibility: hidden">	    
+					<h2 id=title >Content</h2>
+					<div class="hr"></div>
+					<div id=author></div>
+					<div id=date></div>
+					<div class="hr"></div>
+					<div id=content></div>
 				</div>
+			</div>
+			<div id="result" class="shadowbox" style="visibility: hidden ">
 			</div>
         <?php include 'Footer.php' ?>
     </body>

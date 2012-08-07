@@ -1,21 +1,26 @@
 @charset "utf-8";
 
-
-#result{
-	margin-top: 0%;
-	float: left;
-	width: 25%;
-	padding: 20px;
-	overflow: auto;
-	height: 57%;
-}
-
 #field{
 	margin-top: 1%;
-	margin-left: 3%;
+	margin-left: 30px;
+	width: 24%;
+}
+
+#button{
+	margin-top: 1%;
+	width: 4%;
+}
+
+#result{
+	margin-left: 30px;
+	overflow: auto;
+	height: 65%;
 	width: 25%;
 }
 
 #divContent{
-	height: 61%;
+	margin-top: 1%;
+	margin-right: 30px;
+	height: 64%;
+	width: 62%;
 }
