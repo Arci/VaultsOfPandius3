@@ -64,16 +64,12 @@ $sql = 'CREATE TABLE IF NOT EXISTS content_page (
 	id		INTEGER UNSIGNED	NOT NULL AUTO_INCREMENT,
 	href		VARCHAR(100)		NOT NULL UNIQUE,
 	title		VARCHAR(255)		NOT NULL,
-	author		INTEGER UNSIGNED	NOT NULL,
+        source            VARCHAR(100),
 	is_published	BOOLEAN          	NOT NULL DEFAULT FALSE,
         submit_date	DATE,
         publish_date	DATE,        
         text		MEDIUMTEXT,	
 	PRIMARY KEY (id),
-	FOREIGN KEY (author) REFERENCES users(id)
-	  ON DELETE CASCADE
-	  ON UPDATE CASCADE,
-	INDEX (author, submit_date),
         FULLTEXT INDEX (title)
   )
   ENGINE=MyISAM';

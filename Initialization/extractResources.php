@@ -233,7 +233,6 @@ function extractContent($ref, $db, $dom, $domHTML){
 	    explore($dom, $ul, $singleNode);
 	    $dom->appendChild($ul);
 	  }else if($singleNode->nodeName == "table"){
-	    echo "table<br/>";
 	    $table = $dom->createElement('table');    	  
 	    explore($dom, $table, $singleNode);
 	    $dom->appendChild($table);
@@ -247,11 +246,10 @@ function extractContent($ref, $db, $dom, $domHTML){
 
       //aggiungo l'articolo
        $sql = 'INSERT IGNORE INTO content_page 
-	      (href, title, author, submit_date, is_published, text)
+	      (href, title, submit_date, is_published, text)
 	  VALUES
 	      ("'.$ref.'",
 	      "'.mysql_real_escape_string($title, $db).'",
-	      "'.$author.'",
 	      "'.date('Y-m-d').'",
 	      TRUE,
 	      "'.mysql_real_escape_string($text, $db).'")';
