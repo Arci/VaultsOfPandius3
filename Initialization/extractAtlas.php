@@ -482,7 +482,11 @@ function extractInfo($article,$name){
 	/*DEBUG*/$fullName = trim(substr($article,0,strpos($article,"from")));
 	$info['from'] = trim(substr($article,strpos($article,"from")+4,(strpos($article,"posted")-strpos($article,"from")-4)));
 	$info['date'] = date('Y-m-d',strtotime(trim(substr($article,strpos($article,"posted")+6))));
-    }else if(strstr($article,'from') && !strstr($article,'posted')){
+    }else if(strstr($article,'from') && strstr($article,'current as of')){
+	/*DEBUG*/$fullName = trim(substr($article,0,strpos($article,"from")));
+	$info['from'] = trim(substr($article,strpos($article,"from")+4,(strpos($article,"current as of")-strpos($article,"from")-4)));
+	$info['date'] = date('Y-m-d',strtotime(trim(substr($article,strpos($article,"current as of")+13))));
+    }else if(strstr($article,'from')){
 	/*DEBUG*/$fullName = trim(substr($article,0,strpos($article,"from")));
 	$from = trim(substr($article,strpos($article,"from")+4));
 	if(strstr($from,"the Mystara Message Board")){
@@ -497,6 +501,9 @@ function extractInfo($article,$name){
     }else if(strstr($article,'current as of')){
 	/*DEBUG*/ $fullName = trim(substr($article,0,strpos($article,"current as of")));
 	$info['date']= date('Y-m-d',strtotime(trim(substr($article,strpos($article,"current as of")+13))));
+    }else if(strstr($article,'last section updated')){
+	/*DEBUG*/ $fullName = trim(substr($article,0,strpos($article,"last section updated")));
+	$info['date']= date('Y-m-d',strtotime(trim(substr($article,strpos($article,"last section updated")+20))));
     }
     //START DEBUG
     if(strstr($fullName,$name)){
@@ -715,7 +722,19 @@ function extractIndex($iref, $db, $dom, $domHTML){
       } else {
 	  $nodes = $xpath->query("//title", $domHTML->documentElement);
 	  $title = $nodes->item(0)->nodeValue;
-      }            
+      }
+      
+      echo "<br/>-------------<br/>";
+      echo "INDEX --> $iref<br/>"; 
+      
+      $subNodes = array();
+      $nodesText = array();
+      $nodesText = $xpath->query("//body/blockquote/blockquote", $domHTML->documentElement);
+      
+      $list = array();
+      for ($i=0; $i<$nodesText->length; $i++){
+	  $list[$i] = explode(".",$nodesText->item($i)->nodeValue);
+      }
       
       $nodes = $xpath->query("//body", $domHTML->documentElement);
       for ($i=0; $i<$nodes->length; $i++) {        
@@ -787,11 +806,21 @@ function extractIndex($iref, $db, $dom, $domHTML){
       
       if (($iref == 'stories.html')or($iref == 'atlas.html')or($iref == 'resource.html')or($iref == 'adv_camp.html')) 
 	  {$start=8;} else {$start=9;}
-      
+
       for ($i=$start; $i<$nodes->length; $i++) {        
 	  $singleNode = $nodes->item($i);  
 	  $ref = $singleNode->attributes->getNamedItem('href')->nodeValue;
 	  $name = $singleNode->nodeValue;
+	  //recupero informazioni from e date
+	  $info = array();
+	  foreach($list as $element){
+	    foreach($element as $article){
+	      if(strstr($article,$name)){
+		//echo "list selected: ".$article."<br/>";
+		$info = extractInfo($article,$name);
+	      }
+	    }
+	  }
 	  
 	  if (!(in_array($ref, $GLOBALS['global']))) {
 		
@@ -799,7 +828,7 @@ function extractIndex($iref, $db, $dom, $domHTML){
 		$GLOBALS['global'][] = $ref;
 		
 		// METTO QUI LA CHIAMATA A extractContentPage.php //
-		if (extractContent($ref, $db, $dom, $domHTML)){
+		if (extractContent($ref, $db, $dom, $domHTML,$info)){
 			  
 		    // *** LA PAGINA ESAMINATA SI è RIVELATA EFFETTIVAMENTE UNA PAGINA CONTENT ***
 		    // ottengo l'id della pagina content
@@ -859,6 +888,8 @@ function extractIndex($iref, $db, $dom, $domHTML){
 	  
 	  }
       }
+      	  echo "-------------<br/><br/>";
+
 
   // max_allowed_packet = 1M */
   
@@ -877,7 +908,7 @@ function extractContent($ref, $db, $dom, $domHTML, $info){
             
       $xpath = new DomXPath($domHTML);
 
-      $nodes = $xpath->query("//p | //ul | //table", $domHTML->documentElement);
+      $nodes = $xpath->query("//p | //ul  | //ol | //table", $domHTML->documentElement);
       $nodesA = $xpath->query("//a[contains(@href,'html') and not(contains(@href,'authors')) and not(contains(@href,'#'))]", $domHTML->documentElement);
       
       
@@ -902,6 +933,10 @@ function extractContent($ref, $db, $dom, $domHTML, $info){
 	    $ul = $dom->createElement('ul');    	  
 	    explore($dom, $ul, $singleNode);
 	    $dom->appendChild($ul);
+	  }else if($singleNode->nodeName == "ol"){
+	    $ol = $dom->createElement('ol');    	  
+	    explore($dom, $ol, $singleNode);
+	    $dom->appendChild($ol);
 	  }else if($singleNode->nodeName == "table"){
 	    $table = $dom->createElement('table');    	  
 	    explore($dom, $table, $singleNode);
@@ -915,6 +950,9 @@ function extractContent($ref, $db, $dom, $domHTML, $info){
       $title = $nodes->item(0)->nodeValue;
             
       //aggiungo l'articolo
+      if($info['from'] != null && strlen($info['from']) > 25){
+	$info['from'] = null;
+      }
       if($info['date'] != null && $info['from'] != null){
 	$sql = 'INSERT IGNORE INTO content_page 
 	      (href, title, source, submit_date, publish_date, is_published, text)
