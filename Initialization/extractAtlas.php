@@ -476,44 +476,6 @@ function extractBlockquote($iref, $db, $dom, $domHTML){
 }
 
 
-function extractInfo($article,$name){
-    $info = array( 'from' => null,'date' => null);
-    if(strstr($article,'from') && strstr($article,'posted')){
-	/*DEBUG*/$fullName = trim(substr($article,0,strpos($article,"from")));
-	$info['from'] = trim(substr($article,strpos($article,"from")+4,(strpos($article,"posted")-strpos($article,"from")-4)));
-	$info['date'] = date('Y-m-d',strtotime(trim(substr($article,strpos($article,"posted")+6))));
-    }else if(strstr($article,'from') && strstr($article,'current as of')){
-	/*DEBUG*/$fullName = trim(substr($article,0,strpos($article,"from")));
-	$info['from'] = trim(substr($article,strpos($article,"from")+4,(strpos($article,"current as of")-strpos($article,"from")-4)));
-	$info['date'] = date('Y-m-d',strtotime(trim(substr($article,strpos($article,"current as of")+13))));
-    }else if(strstr($article,'from')){
-	/*DEBUG*/$fullName = trim(substr($article,0,strpos($article,"from")));
-	$from = trim(substr($article,strpos($article,"from")+4));
-	if(strstr($from,"the Mystara Message Board")){
-	    $date = substr($from,25);
-	}else if(strstr($from,"The Piazza")){
-	    $date = substr($from,10);
-	}else if(strstr($from,"the Mystara Mailing List")){
-	    $date = substr($from,24);		
-	}
-	$info['from'] = substr($from,0,(strlen($from)-strlen($date)));
-	$info['date'] = date('Y-m-d',strtotime(trim($date)));
-    }else if(strstr($article,'current as of')){
-	/*DEBUG*/ $fullName = trim(substr($article,0,strpos($article,"current as of")));
-	$info['date']= date('Y-m-d',strtotime(trim(substr($article,strpos($article,"current as of")+13))));
-    }else if(strstr($article,'last section updated')){
-	/*DEBUG*/ $fullName = trim(substr($article,0,strpos($article,"last section updated")));
-	$info['date']= date('Y-m-d',strtotime(trim(substr($article,strpos($article,"last section updated")+20))));
-    }
-    //START DEBUG
-    if(strstr($fullName,$name)){
-      echo "<b>name:</b> ".$name." <b>from:</b> ".$info['from']." <b>date:</b> ".$info['date']."<br/>";
-    }else{
-      echo "<b>name:</b> ".$name."<br/>		";
-    } //END DEBUG
-    
-    return $info;
-}
 
 function extractBlockquoteFake($iref, $db, $dom, $domHTML, $fakeref){
   
@@ -812,11 +774,11 @@ function extractIndex($iref, $db, $dom, $domHTML){
 	  $ref = $singleNode->attributes->getNamedItem('href')->nodeValue;
 	  $name = $singleNode->nodeValue;
 	  //recupero informazioni from e date
-	  $info = array();
 	  foreach($list as $element){
 	    foreach($element as $article){
 	      if(strstr($article,$name)){
 		//echo "list selected: ".$article."<br/>";
+		$info = array();
 		$info = extractInfo($article,$name);
 	      }
 	    }
@@ -896,6 +858,52 @@ function extractIndex($iref, $db, $dom, $domHTML){
 }
 
 
+function extractInfo($article,$name){
+    $info = array( 'from' => null,'date' => null);
+    if(strstr($article,'from') && strstr($article,'posted')){
+	/*DEBUG*/$fullName = trim(substr($article,0,strpos($article,"from")));
+	$info['from'] = trim(substr($article,strpos($article,"from")+4,(strpos($article,"posted")-strpos($article,"from")-4)));
+	$info['date'] = date('Y-m-d',strtotime(trim(substr($article,strpos($article,"posted")+6))));
+	if(strstr($info['from'],'from') || strstr($info['from'],'posted')){
+	  if(strstr($info['from'],"the Mystara Message Board")){
+	    $info['from'] = "the Mystara Message Board";
+	  }else if(strstr($info['from'],"The Piazza")){
+	    $info['from'] = "The Piazza";
+	  }else if(strstr($info['from'],"the Mystara Mailing List")){
+	    $info['from'] = "the Mystara Mailing List";
+	  }
+	}
+    }else if(strstr($article,'from') && strstr($article,'current as of')){
+	/*DEBUG*/$fullName = trim(substr($article,0,strpos($article,"from")));
+	$info['from'] = trim(substr($article,strpos($article,"from")+4,(strpos($article,"current as of")-strpos($article,"from")-4)));
+	$info['date'] = date('Y-m-d',strtotime(trim(substr($article,strpos($article,"current as of")+13))));
+    }else if(strstr($article,'from')){
+	/*DEBUG*/$fullName = trim(substr($article,0,strpos($article,"from")));
+	$from = trim(substr($article,strpos($article,"from")+4));
+	if(strstr($from,"the Mystara Message Board")){
+	    $date = substr($from,25);
+	}else if(strstr($from,"The Piazza")){
+	    $date = substr($from,10);
+	}else if(strstr($from,"the Mystara Mailing List")){
+	    $date = substr($from,24);		
+	}else if(strstr($from,"the Mystara News Server")){
+	    $date = substr($from,23);		
+	}
+	$info['from'] = substr($from,0,(strlen($from)-strlen($date)));
+	$info['date'] = date('Y-m-d',strtotime(trim($date)));
+    }else if(strstr($article,'current as of')){
+	/*DEBUG*/ $fullName = trim(substr($article,0,strpos($article,"current as of")));
+	$info['date']= date('Y-m-d',strtotime(trim(substr($article,strpos($article,"current as of")+13))));
+    }else if(strstr($article,'last section updated')){
+	/*DEBUG*/ $fullName = trim(substr($article,0,strpos($article,"last section updated")));
+	$info['date']= date('Y-m-d',strtotime(trim(substr($article,strpos($article,"last section updated")+20))));
+    }
+    
+    /*DEBUG*/ echo "<b>name:</b> ".$name." <b>from:</b> ".$info['from']." <b>date:</b> ".$info['date']."<br/>";
+    
+    return $info;
+}
+
 
 function extractContent($ref, $db, $dom, $domHTML, $info){
       
@@ -951,7 +959,8 @@ function extractContent($ref, $db, $dom, $domHTML, $info){
             
       //aggiungo l'articolo
       //filtro il campo from per eliminare falsi positivi
-      if($info['from'] != null && (strlen($info['from']) > 25) || strstr($info['from'],"by")){
+      if($info['from'] != null && (strlen($info['from']) > 26) || strstr($info['from'],"by")){
+	echo "FROM FIELD DELETED<br/>";
 	$info['from'] = null;
       }
       if($info['date'] != null && $info['from'] != null){

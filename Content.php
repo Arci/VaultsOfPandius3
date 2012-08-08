@@ -55,9 +55,9 @@
                 <div id=date><i>Date: </i>
                     <?php
                         if($result->publish_date != null){
-                            echo $result->publish_date;
+                            echo $result->publish_date." (publish)";
                         }else{
-                            echo $result->submit_date;
+                            echo $result->submit_date." (submit)";
                         }
                     ?>
                 </div>

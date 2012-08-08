@@ -1,4 +1,4 @@
-<?php
+, $info<?php
 
 require 'db.php';
 include 'installFunction.php';
@@ -76,8 +76,15 @@ function extractFirstPage($iref, $db, $dom, $domHTML){
       $subNodes = array();
       for ($j=0; $j<$nodes->length; $j++) {       	  
 	  $subNodes[] = $xpath->query("//blockquote/blockquote[position()=".($j+2)."]/a[contains(@href,'html') and not(contains(@href,'authors')) and not(contains(@href,'#'))]", $domHTML->documentElement);
+	  $nodesText[] = $xpath->query("//blockquote/blockquote[position()=".($j+1)."]", $domHTML->documentElement);	
       }
       
+      $list = array();
+      for ($j=0; $j<$nodes->length; $j++){
+	for ($i=0; $i<$nodesText[$j]->length; $i++){
+	  $list[$j] = explode(".",$nodesText[$j]->item($i)->nodeValue);
+	}
+      }
             
       for ($j=0; $j<$nodes->length; $j++) {       
 	  $singleNode = $nodes->item($j);
@@ -125,12 +132,22 @@ function extractFirstPage($iref, $db, $dom, $domHTML){
 	    $singleSubNode = $subNodes[$j]->item($z);  
 	    $ref = $singleSubNode->attributes->getNamedItem('href')->nodeValue;
 	    $name = $singleSubNode->nodeValue;
+	    //recupero informazioni from e date
+	    $info = array();
+	    foreach($list as $element){
+	      foreach($element as $article){
+		if(strstr($article,$name)){
+		  //echo "list selected: ".$article."<br/>";
+		  $info = extractInfo($article,$name);
+		}
+	      }
+	    }
 	    if (!(in_array($ref, $GLOBALS['global']))) {
 		  //inserisco il ref nell'array'
 		  $GLOBALS['global'][] = $ref;
 		  
 		  // METTO QUI LA CHIAMATA A extractContentPage.php //
-		  if (extractContent($ref, $db, $dom, $domHTML)){
+		  if (extractContent($ref, $db, $dom, $domHTML, $info)){
 			    
 		      // *** LA PAGINA ESAMINATA SI è RIVELATA EFFETTIVAMENTE UNA PAGINA CONTENT ***
 		      // ottengo l'id della pagina content
@@ -216,7 +233,19 @@ function extractIndex($iref, $db, $dom, $domHTML){
       } else {
 	  $nodes = $xpath->query("//title", $domHTML->documentElement);
 	  $title = $nodes->item(0)->nodeValue;
-      }            
+      }
+      
+      echo "<br/>-------------<br/>";
+      echo "INDEX --> $iref<br/>"; 
+      
+      $subNodes = array();
+      $nodesText = array();
+      $nodesText = $xpath->query("//body/blockquote/blockquote", $domHTML->documentElement);
+      
+      $list = array();
+      for ($i=0; $i<$nodesText->length; $i++){
+	  $list[$i] = explode(".",$nodesText->item($i)->nodeValue);
+      }
       
       $nodes = $xpath->query("//body", $domHTML->documentElement);
       for ($i=0; $i<$nodes->length; $i++) {        
@@ -293,6 +322,16 @@ function extractIndex($iref, $db, $dom, $domHTML){
 	  $singleNode = $nodes->item($i);  
 	  $ref = $singleNode->attributes->getNamedItem('href')->nodeValue;
 	  $name = $singleNode->nodeValue;
+	  //recupero informazioni from e date
+	  $info = array();
+	  foreach($list as $element){
+	    foreach($element as $article){
+	      if(strstr($article,$name)){
+		//echo "list selected: ".$article."<br/>";
+		$info = extractInfo($article,$name);
+	      }
+	    }
+	  }
 	  
 	  if (!(in_array($ref, $GLOBALS['global']))) {
 		
@@ -300,7 +339,7 @@ function extractIndex($iref, $db, $dom, $domHTML){
 		$GLOBALS['global'][] = $ref;
 		
 		// METTO QUI LA CHIAMATA A extractContentPage.php //
-		if (extractContent($ref, $db, $dom, $domHTML)){
+		if (extractContent($ref, $db, $dom, $domHTML, $info)){
 			  
 		    // *** LA PAGINA ESAMINATA SI è RIVELATA EFFETTIVAMENTE UNA PAGINA CONTENT ***
 		    // ottengo l'id della pagina content
@@ -365,9 +404,53 @@ function extractIndex($iref, $db, $dom, $domHTML){
   
 }
 
+function extractInfo($article,$name){
+    $info = array( 'from' => null,'date' => null);
+    if(strstr($article,'from') && strstr($article,'posted')){
+	/*DEBUG*/$fullName = trim(substr($article,0,strpos($article,"from")));
+	$info['from'] = trim(substr($article,strpos($article,"from")+4,(strpos($article,"posted")-strpos($article,"from")-4)));
+	$info['date'] = date('Y-m-d',strtotime(trim(substr($article,strpos($article,"posted")+6))));
+	if(strstr($info['from'],'from') || strstr($info['from'],'posted')){
+	  if(strstr($info['from'],"the Mystara Message Board")){
+	    $info['from'] = "the Mystara Message Board";
+	  }else if(strstr($info['from'],"The Piazza")){
+	    $info['from'] = "The Piazza";
+	  }else if(strstr($info['from'],"the Mystara Mailing List")){
+	    $info['from'] = "the Mystara Mailing List";
+	  }
+	}
+    }else if(strstr($article,'from') && !strstr($article,'posted')){
+	if(strstr($article,'current as of')){
+	  /*DEBUG*/$fullName = trim(substr($article,0,strpos($article,"from")));
+	  $info['from'] = trim(substr($article,strpos($article,"from")+4,(strpos($article,"current as of")-strpos($article,"from")-4)));
+	  $info['date'] = date('Y-m-d',strtotime(trim(substr($article,strpos($article,"current as of")+13))));
+	}else{
+	  /*DEBUG*/$fullName = trim(substr($article,0,strpos($article,"from")));
+	  $from = trim(substr($article,strpos($article,"from")+4));
+	  if(strstr($from,"the Mystara Message Board")){
+	      $date = substr($from,25);
+	  }else if(strstr($from,"The Piazza")){
+	      $date = substr($from,10);
+	  }else if(strstr($from,"the Mystara Mailing List")){
+	      $date = substr($from,24);		
+	  }
+	  $info['from'] = substr($from,0,(strlen($from)-strlen($date)));
+	  $info['date'] = date('Y-m-d',strtotime(trim($date)));
+	}
+    }else if(strstr($article,'current as of')){
+	/*DEBUG*/ $fullName = trim(substr($article,0,strpos($article,"current as of")));
+	$info['date']= date('Y-m-d',strtotime(trim(substr($article,strpos($article,"current as of")+13))));
+    }else if(strstr($article,'last section updated')){
+	/*DEBUG*/ $fullName = trim(substr($article,0,strpos($article,"last section updated")));
+	$info['date']= date('Y-m-d',strtotime(trim(substr($article,strpos($article,"last section updated")+20))));
+    }
+    
+    /*DEBUG*/ echo "<b>name:</b> ".$name." <b>from:</b> ".$info['from']." <b>date:</b> ".$info['date']."<br/>";
+    
+    return $info;
+}
 
-
-function extractContent($ref, $db, $dom, $domHTML){
+function extractContent($ref, $db, $dom, $domHTML, $info){
       
       $dom = new DomDocument();
       // open if file exists
@@ -420,14 +503,42 @@ function extractContent($ref, $db, $dom, $domHTML){
       $title = $nodes->item(0)->nodeValue;
       
       //aggiungo l'articolo
-      $sql = 'INSERT IGNORE INTO content_page 
+      //filtro il campo from per eliminare falsi positivi
+      if($info['from'] != null && (strlen($info['from']) > 25) || strstr($info['from'],"by")){
+	echo "FROM FIELD DELETED<br/>";
+	$info['from'] = null;
+      }
+      if($info['date'] != null && $info['from'] != null){
+	$sql = 'INSERT IGNORE INTO content_page 
+	      (href, title, source, submit_date, publish_date, is_published, text)
+	  VALUES
+	      ("'.$ref.'",
+	      "'.mysql_real_escape_string($title, $db).'",
+	      "'.$info['from'].'",
+	      "'.date('Y-m-d').'",
+	      "'.$info['date'].'",
+	      TRUE,
+	      "'.mysql_real_escape_string($text, $db).'")';
+      }else if($info['date'] != null && $info['from'] == null){
+	$sql = 'INSERT IGNORE INTO content_page 
+	      (href, title, submit_date, publish_date, is_published, text)
+	  VALUES
+	      ("'.$ref.'",
+	      "'.mysql_real_escape_string($title, $db).'",
+	      "'.date('Y-m-d').'",
+	      "'.$info['date'].'",
+	      TRUE,
+	      "'.mysql_real_escape_string($text, $db).'")';
+      }else{
+	$sql = 'INSERT IGNORE INTO content_page 
 	      (href, title, submit_date, is_published, text)
-	      VALUES
+	  VALUES
 	      ("'.$ref.'",
 	      "'.mysql_real_escape_string($title, $db).'",
 	      "'.date('Y-m-d').'",
 	      TRUE,
 	      "'.mysql_real_escape_string($text, $db).'")';
+      }
       mysql_query($sql, $db) or die(mysql_error($db));
       $lastInseredContent = mysql_insert_id();
       
