@@ -950,7 +950,8 @@ function extractContent($ref, $db, $dom, $domHTML, $info){
       $title = $nodes->item(0)->nodeValue;
             
       //aggiungo l'articolo
-      if($info['from'] != null && strlen($info['from']) > 25){
+      //filtro il campo from per eliminare falsi positivi
+      if($info['from'] != null && (strlen($info['from']) > 25) || strstr($info['from'],"by")){
 	$info['from'] = null;
       }
       if($info['date'] != null && $info['from'] != null){

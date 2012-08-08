@@ -207,7 +207,7 @@ function extractContent($ref, $db, $dom, $domHTML){
             
       $xpath = new DomXPath($domHTML);
 
-      $nodes = $xpath->query("//p | //ul | //table", $domHTML->documentElement);
+      $nodes = $xpath->query("//p | //ul  | //ol | //table", $domHTML->documentElement);
       $nodesA = $xpath->query("//a[contains(@href,'html') and not(contains(@href,'authors')) and not(contains(@href,'#'))]", $domHTML->documentElement);
       
       
@@ -232,6 +232,10 @@ function extractContent($ref, $db, $dom, $domHTML){
 	    $ul = $dom->createElement('ul');    	  
 	    explore($dom, $ul, $singleNode);
 	    $dom->appendChild($ul);
+	  }else if($singleNode->nodeName == "ol"){
+	    $ol = $dom->createElement('ol');    	  
+	    explore($dom, $ol, $singleNode);
+	    $dom->appendChild($ol);
 	  }else if($singleNode->nodeName == "table"){
 	    $table = $dom->createElement('table');    	  
 	    explore($dom, $table, $singleNode);
