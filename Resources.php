@@ -40,6 +40,7 @@ http://www.w3.org/TR/html4/loose.dtd>
                 <div class="hr"></div>
                 <div id=author></div>
                 <div id=date></div>
+                <div id=source></div>
                 <div class="hr"></div>
                 <div id=content ></div>
             </div>

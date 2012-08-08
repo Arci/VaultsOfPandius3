@@ -14,7 +14,7 @@
     //variable
     $sResponse = '<CONTENT>';
     $sql = 'SELECT
-	    title, name, submit_date, text
+	    title, name, submit_date, publish_date, source, text
 	FROM
 	    content_page JOIN users ON author = users.id
 	WHERE
@@ -23,7 +23,16 @@
     while ($row = mysql_fetch_array($result)) {	      
 	$sResponse .= '<TITLE>'.$row['title'].'</TITLE>';
 	$sResponse .= '<AUTHOR>'.$row['name'].'</AUTHOR>';
-	$sResponse .= '<DATE>'.$row['submit_date'].'</DATE>';
+	if($row['source'] != null){
+	    $sResponse .= '<SOURCE>'.$row['source'].'</SOURCE>';
+	}else{
+	    $sResponse .= '<SOURCE>Unknown</SOURCE>';
+	}
+	if($row['publish_date'] != null){
+	    $sResponse .= '<DATE>'.$row['publish_date'].' (publish)</DATE>';
+	}else{
+	    $sResponse .= '<DATE>'.$row['submit_date'].' (submit)</DATE>';
+	}
 	$sResponse .= '<TEXT>"'.$row['text'].'"</TEXT>';
     }            
     mysql_free_result($result);          

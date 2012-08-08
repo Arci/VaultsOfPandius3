@@ -62,7 +62,7 @@
 	    //customer ID
 	    $sID = $_GET["id"];	      	    
 	    $sql = 'SELECT
-		    title, submit_date, name
+		    title, publish_date, submit_date, source, name
 		FROM
 		    content_page, content_page_author, users
 		WHERE
@@ -70,10 +70,19 @@
 		  content_page_author.author = users.id AND
 		    content_page.id="'.$sID.'"';
 	    $result = mysql_query($sql, $db);
-	    while ($row = mysql_fetch_array($result)) {	      
-		$sResponse .= '<TITLE>'.$row['title'].'</TITLE>';
-		$sResponse .= '<AUTHOR>'.$row['name'].'</AUTHOR>';
-		$sResponse .= '<DATE>'.$row['submit_date'].'</DATE>';
+	    while ($row = mysql_fetch_array($result)) {
+	       $sResponse .= '<TITLE>'.$row['title'].'</TITLE>';
+	       $sResponse .= '<AUTHOR>'.$row['name'].'</AUTHOR>';
+	       if($row['source'] != null){
+	         $sResponse .= '<SOURCE>'.$row['source'].'</SOURCE>';
+	       }else{
+	         $sResponse .= '<SOURCE>Unknown</SOURCE>';
+	       }
+	       if($row['publish_date'] != null){
+		  $sResponse .= '<DATE>'.$row['publish_date'].' (publish)</DATE>';
+	       }else{
+		  $sResponse .= '<DATE>'.$row['submit_date'].' (submit)</DATE>';
+	       }
 	    }            
 	    mysql_free_result($result); 
 	    break;

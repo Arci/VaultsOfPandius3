@@ -27,7 +27,7 @@
         
         $id = $_GET['id'];
         
-        $sql="SELECT c.id , c.title, u.name, c.submit_date, c.text FROM content_page c, content_page_author a, users u WHERE (((c.id='$id') AND (a.contentPage=c.id)) AND u.id=a.author)";
+        $sql="SELECT c.id , c.title, u.name, c.source, c.publish_date, c.submit_date, c.text FROM content_page c, content_page_author a, users u WHERE (((c.id='$id') AND (a.contentPage=c.id)) AND u.id=a.author)";
         $result = mysql_query($sql, $db);
 		$author = $result;
 		$result = mysql_fetch_object($result);
@@ -37,15 +37,30 @@
             <div class="shadowbox" style="height: 71%;">	    
                 <h2 id=title ><?php echo $result->title ?></h2>
                 <div class="hr"></div>
-                <div id=author>
-					<?php
-						echo $result->name;
-						while ($row = mysql_fetch_object($author)){
-							echo ", " . $row->name;
-						}
-					?>
-				</div>
-                <div id=date><?php echo $result->submit_date ?></div>
+                <div id=author><i>Author: </i><b>
+                    <?php
+                        echo $result->name;
+                        while ($row = mysql_fetch_object($author)){
+                            echo ", " . $row->name;
+                        }
+                    ?></b>
+		</div>
+                <div id=source>
+                    <?php
+                        if($result->source != null){
+                            echo "<i>Source: </i>".$result->source;
+                        }
+                    ?>
+                </div>
+                <div id=date><i>Date: </i>
+                    <?php
+                        if($result->publish_date != null){
+                            echo $result->publish_date;
+                        }else{
+                            echo $result->submit_date;
+                        }
+                    ?>
+                </div>
                 <div class="hr"></div>
                 <div id=content ><?php echo $result->text ?></div>
                 <script type="text/javascript">

@@ -25,6 +25,7 @@ http://www.w3.org/TR/html4/loose.dtd>
 					<h2 id=title >Content</h2>
 					<div class="hr"></div>
 					<div id=author></div>
+                                        <div id=source></div>
 					<div id=date></div>
 					<div class="hr"></div>
 					<div id=content></div>

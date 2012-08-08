@@ -36,6 +36,14 @@ h1 {
     font-family:sans-serif;
 }
 
+#source{
+    padding-left:10px;
+    padding-right:10px;
+    color: #666;
+    font-size: 0.9em;
+    font-family:sans-serif;
+}
+
 #date {
     padding-left:10px;
     padding-right:10px;

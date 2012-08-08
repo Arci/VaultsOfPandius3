@@ -65,10 +65,12 @@ function linkTo(ref){
     var title = document.getElementById("title");
     var author = document.getElementById("author");
     var date = document.getElementById("date");
+    var source = document.getElementById("source");
 
     title.innerHTML = "";
     author.innerHTML = "";
     date.innerHTML = "";
+    source.innerHTML = "";
     var oXHR2 = zXmlHttp.createRequest();
     oXHR2.open("get", "GetInfo.php?request=link&ref="+ref, true);
     oXHR2.onreadystatechange = function () {
@@ -80,6 +82,11 @@ function linkTo(ref){
                 var aAuthor = selectNodes(oXHR2.responseXML, "//AUTHOR");
                 author.innerHTML +="<i>Author: </i><b>"+getText(aAuthor[0])+"</b>";
                 infoContent.push(getText(aAuthor[0]));
+		var aSource = selectNodes(oXHR2.responseXML, "//SOURCE");
+		if(getText(aSource[0]) != "Unknown"){
+		    source.innerHTML +="<i>Source: </i>"+getText(aSource[0]);
+		    infoContent.push(getText(aSource[0]));
+		}
                 var aDate = selectNodes(oXHR2.responseXML, "//DATE");
                 date.innerHTML +="<i>Date: </i>"+getText(aDate[0]);
                 infoContent.push(getText(aDate[0]));
@@ -164,10 +171,12 @@ function fillContentIndex(id){
     var title = document.getElementById("title");
     var author = document.getElementById("author");
     var date = document.getElementById("date");
+    var source = document.getElementById("source");
 
     title.innerHTML = "";
     author.innerHTML = "";
     date.innerHTML = "";
+    source.innerHTML = "";
     var oXHR2 = zXmlHttp.createRequest();
     oXHR2.open("get", "GetInfo.php?request=index&id="+id, true);
     oXHR2.onreadystatechange = function () {
@@ -179,6 +188,14 @@ function fillContentIndex(id){
                 var aAuthor = selectNodes(oXHR2.responseXML, "//AUTHOR");
                 author.innerHTML +="<i>Author: </i><b>"+getText(aAuthor[0])+"</b>";
                 infoContent.push(getText(aAuthor[0]));
+		var aSource = selectNodes(oXHR2.responseXML, "//SOURCE");
+		if(getText(aSource[0]) != "Unknown"){
+		    source.innerHTML +="<i>Source: </i>"+getText(aSource[0]);
+		    infoContent.push(getText(aSource[0]));
+		}
+                var aDate = selectNodes(oXHR2.responseXML, "//DATE");
+                date.innerHTML +="<i>Date: </i>"+getText(aDate[0]);
+		infoContent.push(getText(aDate[0]));
                 infoContent.push(null);
                 aHistory.push(infoContent); 
             } 
@@ -227,10 +244,12 @@ function fillContent(id){
     var title = document.getElementById("title");
     var author = document.getElementById("author");
     var date = document.getElementById("date");
+    var source = document.getElementById("source");
 
     title.innerHTML = "";
     author.innerHTML = "";
     date.innerHTML = "";
+    source.innerHTML = "";
     var oXHR2 = zXmlHttp.createRequest();
     oXHR2.open("get", "Control/GetInfo.php?request=content&id="+id, true);
     oXHR2.onreadystatechange = function () {
@@ -251,6 +270,11 @@ function fillContent(id){
 		}
                 author.innerHTML +="<i>Author: </i><b>"+auth+"</b>";
                 infoContent.push(getText(aAuthor[0]));
+		var aSource = selectNodes(oXHR2.responseXML, "//SOURCE");
+		if(getText(aSource[0]) != "Unknown"){
+		    source.innerHTML +="<i>Source: </i>"+getText(aSource[0]);
+		}
+                infoContent.push(getText(aSource[0]));
                 var aDate = selectNodes(oXHR2.responseXML, "//DATE");
                 date.innerHTML +="<i>Date: </i>"+getText(aDate[0]);
                 infoContent.push(getText(aDate[0]));
@@ -496,10 +520,12 @@ function fillSearch(id){
     var title = document.getElementById("title");
     var author = document.getElementById("author");
     var date = document.getElementById("date");
+    var source = document.getElementById("source");
 
     title.innerHTML = "";
     author.innerHTML = "";
     date.innerHTML = "";
+    source.innerHTML = "";
     var oXHR2 = zXmlHttp.createRequest();
     oXHR2.open("get", "Control/GetInfo.php?request=content&id="+id, true);
     oXHR2.onreadystatechange = function () {
@@ -515,7 +541,11 @@ function fillSearch(id){
 			auth = auth.substring(0,auth.length-2);
 		    }
 		}
-                author.innerHTML +="<i>Author: </i><b>"+auth+"</b>";
+		author.innerHTML +="<i>Author: </i><b>"+auth+"</b>";
+		var aSource = selectNodes(oXHR2.responseXML, "//SOURCE");
+		if(getText(aSource[0]) != "Unknown"){
+		    source.innerHTML +="<i>Source: </i>"+getText(aSource[0]);
+		}
                 var aDate = selectNodes(oXHR2.responseXML, "//DATE");
                 date.innerHTML +="<i>Date: </i>"+getText(aDate[0]);
             } 
