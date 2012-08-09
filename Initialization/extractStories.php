@@ -1,7 +1,6 @@
 <?php
 
 require 'db.php';
-include 'installFunction.php';
 
 // variabili globali
 $global = array();
@@ -26,6 +25,7 @@ extractFirstPage('stories.html', $db, $dom, $domHTML);
 echo "----> ADVENTURES <----";
 extractFirstPage('adv_camp.html', $db, $dom, $domHTML);
 
+require_once('common.php');
 cleanIndexTable($db);
 
 //**************************************************************************************************************//
@@ -547,16 +547,9 @@ function extractContent($ref, $db, $dom, $domHTML, $info){
 	    
       foreach($nodes as $node){
 	$name = trim($node->nodeValue);
-	echo "name: $name<br/>";
 	//fix degli utenti che danno problemi
-	if($name == "Giulio N. Caroletti"){ $name = "Giulio Caroletti";}
-	if($name == "Roger LaVern Girtman, II"){ $name = "Roger LV Girtman II";}
-	if($name == "George E. Hrabovsky"){ $name = "George Hrabovsky";}
-	if($name == "The Stalker"){ $name = "Jens \"the Stalker\" Schnabel ";}
-	if($name == "Steven B Wilson"){ $name = "Steven B. Wilson";}
-	if($name == "Joe Not Charles"){ $name = "Joenotcharles";}
-	if($name == "JTR"){ $name = "Old Dawg";}
-	if($name == "Ville V Lähde"){ $name = "Ville Lähde";}
+	require_once('common.php');
+	$name = fixUser($name);
 	$sql = 'SELECT id 
 	  FROM 
 	      users 
@@ -571,8 +564,6 @@ function extractContent($ref, $db, $dom, $domHTML, $info){
 	}  else {
 	    //errore    
 	}
-	if($author == null){ $author = "null";}
-	echo "author id : $author<br/>";
 	mysql_free_result($result);
 	
 	$sql = 'INSERT IGNORE INTO content_page_author
@@ -678,7 +669,6 @@ function explore($dom, $fatherElement, $fatherNode){
 	      }  
       }    
 }
-
 
 echo 'success';
 

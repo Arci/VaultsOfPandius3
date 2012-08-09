@@ -22,8 +22,8 @@ $br = 4;
 echo "----> ATLAS <----<br/>";
 extractFirstPage('atlas.html', $db, $dom, $domHTML);
 
+require_once('common.php');
 cleanIndexTable($db);
-
 
 
 //**************************************************************************************************************//
@@ -1002,7 +1002,9 @@ function extractContent($ref, $db, $dom, $domHTML, $info){
       
       foreach($nodes as $node){
 	    $name = trim($node->nodeValue);
-
+	    //fix degli utenti che danno problemi
+	    require_once('common.php');
+	    $name = fixUser($name);
 	    $sql = 'SELECT id 
 	      FROM 
 		users 
@@ -1179,12 +1181,6 @@ function explore($dom, $fatherElement, $fatherNode){
 	      }  
       }    
 }
-
-function cleanIndexTable($db){
-    $sql="DELETE from index_page where (href!='resource.html' and menu='1' and href!='stories.html' and href!='adv_camp.html' and href!='atlas.html') or menu='0'";
-    mysql_query($sql, $db);
-}
-
 
 echo 'success';
 
