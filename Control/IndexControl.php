@@ -96,6 +96,7 @@
 		  } 	    
 	      }
 	      
+	      //TODO
 	      $sql = 'SELECT
 		      id_target_content_page, id_target_index_page, link_name
 		  FROM 
@@ -127,6 +128,7 @@
 		  } 	    
 	      }
 	      
+	      //TODO
 	      $sql = 'SELECT
 		      id_target_content_page, id_target_index_page, link_name
 		  FROM 
@@ -155,7 +157,8 @@
     
     function search($sIdSub, $sAuth){
 	
-	$db = $GLOBALS["db"]; 
+	$db = $GLOBALS["db"];
+	//TODO
 	$sql = 'SELECT link_name 
 	    FROM 
 		content_page JOIN index_2_content ON content_page.id=id_target_content_page 
@@ -193,7 +196,8 @@
     
     function searchPending($sIdSub, $sAuth){
 	
-	$db = $GLOBALS["db"]; 
+	$db = $GLOBALS["db"];
+	//TODO
 	$sql = 'SELECT link_name 
 	    FROM 
 		content_page JOIN index_2_content ON content_page.id=id_target_content_page 

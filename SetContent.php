@@ -45,14 +45,22 @@
 		
 		
 		$sql = 'INSERT INTO content_page
-			(href, title, author, submit_date, is_published, text)
+			(href, title, submit_date, is_published, text)
 		    VALUES
 			("'.mysql_real_escape_string($sHref, $db).'",
 			 "'.mysql_real_escape_string($sTitle, $db).'",
-			 "'.$sAuthor.'",
 			 "'.date('Y-m-d').'",
 			 FALSE,
 			 "'.mysql_real_escape_string($sText, $db).'")';
+		mysql_query($sql, $db) or die(mysql_error($db));
+		$lastInseredContent = mysql_insert_id();
+		
+		//Aggiungo l'autore
+		$sql = 'INSERT IGNORE INTO content_page_author
+		(contentPage, author)
+		VALUES
+		("'.$lastInseredContent.'",
+		"'.$sAuthor.'")';
 		mysql_query($sql, $db) or die(mysql_error($db));
 		
 		$sql = 'SELECT id 
@@ -108,6 +116,8 @@
 		    WHERE
 			id="'.$sID.'"';
 		mysql_query($sql, $db) or die(mysql_error($db));
+		//da content_page_author viene eliminata
+		//automaticamente: ON DELETE CASCADE
 		$resultQuery = "done";
 	    } else {
 		$resultQuery = "fail";	      

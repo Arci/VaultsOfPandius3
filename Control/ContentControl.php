@@ -16,8 +16,10 @@
     $sql = 'SELECT
 	    title, name, submit_date, publish_date, source, text
 	FROM
-	    content_page JOIN users ON author = users.id
+	    content_page, content_page_author, users
 	WHERE
+	    content_page.id=content_page_author.contentPage AND
+	    content_page_author.author = users.id AND
 	    content_page.id="'.$sID.'"';
     $result = mysql_query($sql, $db);
     while ($row = mysql_fetch_array($result)) {	      

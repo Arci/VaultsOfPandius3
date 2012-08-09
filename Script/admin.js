@@ -370,9 +370,11 @@ function fillContent(id) {
         var title = document.getElementById("titleView");
         var date = document.getElementById("dateView");
         var author = document.getElementById("authorView");
-
+	var source = document.getElementById("source");
+	
         title.innerHTML = "";		
         date.innerHTML = "";
+	source.innerHTML = "";
         var oXHR2 = zXmlHttp.createRequest();
         oXHR2.open("get", "GetInfo.php?request=content&id="+id, true);
         oXHR2.onreadystatechange = function () {
@@ -381,7 +383,18 @@ function fillContent(id) {
                     var aTitle = selectNodes(oXHR2.responseXML, "//TITLE");
                     title.innerHTML = getText(aTitle[0]);			
                     var aAuthor = selectNodes(oXHR2.responseXML, "//AUTHOR");
-                    author.innerHTML ="<i>Author:</i> <b>"+getText(aAuthor[0])+"</b>";
+                    var auth = "";
+		    for(var i = 0; i < aAuthor.length; i++){
+			auth +=getText(aAuthor[i])+", ";
+			if(i == aAuthor.length - 1){
+			    auth = auth.substring(0,auth.length-2);
+			}
+		    }
+		    author.innerHTML +="<i>Author: </i><b>"+auth+"</b>";
+		    var aSource = selectNodes(oXHR2.responseXML, "//SOURCE");
+		    if(getText(aSource[0]) != "Unknown"){
+			source.innerHTML +="<i>Source: </i>"+getText(aSource[0]);
+		    }
                     var aDate = selectNodes(oXHR2.responseXML, "//DATE");
                     date.innerHTML ="<i>Submit Date:</i> "+getText(aDate[0]);		      
                 } 

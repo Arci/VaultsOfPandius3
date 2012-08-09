@@ -18,11 +18,10 @@ function selectNodes(oXmlDom, sXPath){
 
 
 function getText(oNode){
-      
+      /*DEBUG*/console.log(oNode);
       var sText;
       if (oNode.hasChildNodes()){
 	sText = oNode.firstChild.nodeValue;
-	
       } else {
 	sText = "link form image";
       }

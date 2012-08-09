@@ -31,7 +31,7 @@
         $sql = "SELECT id, name FROM users where email like '%$user%'";
         $user = mysql_query($sql, $db);
         $user = mysql_fetch_object($user);
-        $sql="SELECT title, id  FROM content_page where author = $user->id";
+        $sql="SELECT title, id  FROM content_page, content_page_author WHERE contentPage=id AND author = $user->id";
         $results = mysql_query($sql, $db);
         //$result = mysql_fetch_object($results);
         ?>

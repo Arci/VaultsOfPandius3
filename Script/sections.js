@@ -15,7 +15,8 @@ function backPage(){
     document.getElementById("content").innerHTML = aHistory[indexHistory][0];
     document.getElementById("title").innerHTML = aHistory[indexHistory][1];
     document.getElementById("author").innerHTML = "<i>Author: </i><b>"+aHistory[indexHistory][2]+"</b>";
-    document.getElementById("date").innerHTML = "<i>Date: </i>"+aHistory[indexHistory][3];
+    document.getElementById("source").innerHTML = "<i>Source: </i>"+aHistory[indexHistory][3];
+    document.getElementById("date").innerHTML = "<i>Date: </i>"+aHistory[indexHistory][4];
     if (indexHistory == 0){
         document.getElementById("imgLeft").setAttribute("style","visibility:hidden");
     }
@@ -30,7 +31,8 @@ function forwardPage(){
     document.getElementById("content").innerHTML = aHistory[indexHistory][0];
     document.getElementById("title").innerHTML = aHistory[indexHistory][1];
     document.getElementById("author").innerHTML = "<i>Author: </i><b>"+aHistory[indexHistory][2]+"</b>";
-    document.getElementById("date").innerHTML = "<i>Date: </i>"+aHistory[indexHistory][3];
+    document.getElementById("source").innerHTML = "<i>Source: </i>"+aHistory[indexHistory][3];
+    document.getElementById("date").innerHTML = "<i>Date: </i>"+aHistory[indexHistory][4];
     if (indexHistory == aHistory.length-1){
         document.getElementById("imgRight").setAttribute("style","visibility:hidden");
     }
@@ -80,8 +82,15 @@ function linkTo(ref){
                 title.innerHTML = getText(aTitle[0]);
                 infoContent.push(getText(aTitle[0]));
                 var aAuthor = selectNodes(oXHR2.responseXML, "//AUTHOR");
-                author.innerHTML +="<i>Author: </i><b>"+getText(aAuthor[0])+"</b>";
-                infoContent.push(getText(aAuthor[0]));
+                var auth = "";
+		for(var i = 0; i < aAuthor.length; i++){
+		    auth +=getText(aAuthor[i])+", ";
+		    if(i == aAuthor.length - 1){
+			auth = auth.substring(0,auth.length-2);
+		    }
+		}
+                author.innerHTML +="<i>Author: </i><b>"+auth+"</b>";
+                infoContent.push(auth);
 		var aSource = selectNodes(oXHR2.responseXML, "//SOURCE");
 		if(getText(aSource[0]) != "Unknown"){
 		    source.innerHTML +="<i>Source: </i>"+getText(aSource[0]);
@@ -186,8 +195,15 @@ function fillContentIndex(id){
                 title.innerHTML = getText(aTitle[0]);
                 infoContent.push(getText(aTitle[0]));
                 var aAuthor = selectNodes(oXHR2.responseXML, "//AUTHOR");
-                author.innerHTML +="<i>Author: </i><b>"+getText(aAuthor[0])+"</b>";
-                infoContent.push(getText(aAuthor[0]));
+                var auth = "";
+		for(var i = 0; i < aAuthor.length; i++){
+		    auth +=getText(aAuthor[i])+", ";
+		    if(i == aAuthor.length - 1){
+			auth = auth.substring(0,auth.length-2);
+		    }
+		}
+                author.innerHTML +="<i>Author: </i><b>"+auth+"</b>";
+                infoContent.push(auth);
 		var aSource = selectNodes(oXHR2.responseXML, "//SOURCE");
 		if(getText(aSource[0]) != "Unknown"){
 		    source.innerHTML +="<i>Source: </i>"+getText(aSource[0]);
@@ -259,9 +275,7 @@ function fillContent(id){
                 title.innerHTML = getText(aTitle[0]);
                 infoContent.push(getText(aTitle[0]));
                 var aAuthor = selectNodes(oXHR2.responseXML, "//AUTHOR");
-		
-		//document.write(aAuthor.length);
-		var auth = "";
+    		var auth = "";
 		for(var i = 0; i < aAuthor.length; i++){
 		    auth +=getText(aAuthor[i])+", ";
 		    if(i == aAuthor.length - 1){
@@ -269,7 +283,7 @@ function fillContent(id){
 		    }
 		}
                 author.innerHTML +="<i>Author: </i><b>"+auth+"</b>";
-                infoContent.push(getText(aAuthor[0]));
+		infoContent.push(auth);
 		var aSource = selectNodes(oXHR2.responseXML, "//SOURCE");
 		if(getText(aSource[0]) != "Unknown"){
 		    source.innerHTML +="<i>Source: </i>"+getText(aSource[0]);
@@ -541,7 +555,7 @@ function fillSearch(id){
 			auth = auth.substring(0,auth.length-2);
 		    }
 		}
-		author.innerHTML +="<i>Author: </i><b>"+auth+"</b>";
+                author.innerHTML +="<i>Author: </i><b>"+auth+"</b>";
 		var aSource = selectNodes(oXHR2.responseXML, "//SOURCE");
 		if(getText(aSource[0]) != "Unknown"){
 		    source.innerHTML +="<i>Source: </i>"+getText(aSource[0]);

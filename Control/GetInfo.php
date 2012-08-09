@@ -66,9 +66,9 @@
 		FROM
 		    content_page, content_page_author, users
 		WHERE
-		  content_page.id=content_page_author.contentPage AND
-		  content_page_author.author = users.id AND
-		    content_page.id="'.$sID.'"';
+		     content_page.id=content_page_author.contentPage AND
+		     content_page_author.author = users.id AND
+		     content_page.id="'.$sID.'"';
 	    $result = mysql_query($sql, $db);
 	    while ($row = mysql_fetch_array($result)) {
 	       $sResponse .= '<TITLE>'.$row['title'].'</TITLE>';
@@ -91,17 +91,28 @@
 	    //customer ID
 	    $sRef = $_GET["ref"];	      	    
 	    $sql = 'SELECT
-		    title, name, submit_date
+		    title, name, source, submit_date, publish_date
 		FROM
-		    content_page JOIN users ON author = users.id
+		    content_page, content_page_author, users
 		WHERE
-		    content_page.href="'.$sRef.'"';
+		     content_page.id=content_page_author.contentPage AND
+		     content_page_author.author = users.id AND
+		     content_page.href="'.$sRef.'"';
 	    $result = mysql_query($sql, $db);
 	    
 	    if ($row = mysql_fetch_array($result)) {	      
 		$sResponse .= '<TITLE>'.$row['title'].'</TITLE>';
 		$sResponse .= '<AUTHOR>'.$row['name'].'</AUTHOR>';
-		$sResponse .= '<DATE>'.$row['submit_date'].'</DATE>';
+		if($row['source'] != null){
+	         $sResponse .= '<SOURCE>'.$row['source'].'</SOURCE>';
+	       }else{
+	         $sResponse .= '<SOURCE>Unknown</SOURCE>';
+	       }
+	       if($row['publish_date'] != null){
+		  $sResponse .= '<DATE>'.$row['publish_date'].' (publish)</DATE>';
+	       }else{
+		  $sResponse .= '<DATE>'.$row['submit_date'].' (submit)</DATE>';
+	       }
 	    } else {
 		    mysql_free_result($result); 
 		    $sql = 'SELECT
