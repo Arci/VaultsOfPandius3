@@ -318,10 +318,11 @@ function extractBlockquote($iref, $db, $dom, $domHTML){
       $nodesText = array();
       
       for ($j=0; $j<$nodes->length; $j++) {
+	//DEBUG: la seguente query sistemerebbe l'index di Aelos, ma salverebbe jpg e pdf come testo
 	//if($j==0)
 	//  $subNodes[]= $xpath->query("//blockquote/blockquote[position()=1]/a[(contains(@href,'html') or(contains(@href,'pdf')) or(contains(@href,'jpg'))) and not(contains(@href,'authors')) and not(contains(@href,'#'))]", $domHTML->documentElement);
 	//else
-	  $subNodes[] = $xpath->query("//blockquote/blockquote[position()=".($j+1)."]/a[contains(@href,'html') and not(contains(@href,'authors')) and not(contains(@href,'#'))]", $domHTML->documentElement);
+	$subNodes[] = $xpath->query("//blockquote/blockquote[position()=".($j+1)."]/a[contains(@href,'html') and not(contains(@href,'authors')) and not(contains(@href,'#'))]", $domHTML->documentElement);
 	$nodesText[] = $xpath->query("//blockquote/blockquote[position()=".($j+1)."]", $domHTML->documentElement);	
       }
       
@@ -513,12 +514,23 @@ function extractBlockquoteFake($iref, $db, $dom, $domHTML, $fakeref){
       }
       mysql_free_result($result);
       
-      
+      echo "<br/>-------------<br/>";
+      echo "WORLD --> $iref<br/>"; 
       
       
       //estraggo le sotto-sezioni
       $nodes = $xpath->query("//h1", $domHTML->documentElement);
-      //echo $nodes->length;      
+      //DEBUG: la seguente query estrae le 'regioni' di 'Outer World'
+      $subCategory = $xpath->query("//body/blockquote/blockquote[position()=".($j+2)."]/blockquote/h2 | //body/blockquote/blockquote[position()=".($j+2)."]/h2", $domHTML->documentElement);
+      echo "<b>number of world: ".($nodes->length-1)."</b>";      
+      for($i=1;$i<$nodes->length;$i++){
+	echo "<br/>world: ".$nodes->item($i)->nodeValue;
+      }
+      echo "<br/>";
+      foreach($subCategory as $c){
+	echo "<br/>region: ".$c->nodeValue;
+      }
+      echo "<br/>";
       
       $subNodes = array();
       $nodesText = array();
@@ -526,7 +538,6 @@ function extractBlockquoteFake($iref, $db, $dom, $domHTML, $fakeref){
 	  $subNodes[] = $xpath->query("//body/blockquote/blockquote[position()=".($j+2)."]//a[contains(@href,'html') and not(contains(@href,'authors')) and not(contains(@href,'#'))]", $domHTML->documentElement);
 	  $nodesText[] = $xpath->query("//body/blockquote/blockquote[position()=".($j+2)."]", $domHTML->documentElement);	
       }
-           
             
       for ($j=0; $j<$nodes->length-1; $j++) {       
 	  $singleNode = $nodes->item($j+1);
@@ -659,7 +670,7 @@ function extractBlockquoteFake($iref, $db, $dom, $domHTML, $fakeref){
 	    }
 	    //fine parte comune
       }
-      
+            	  echo "-------------<br/><br/>";
       
       
       
@@ -1000,8 +1011,16 @@ function extractContent($ref, $db, $dom, $domHTML, $info){
       //scorro tutti gli autori e li aggungo
       $nodes = $xpath->query("//a[contains(@href,'authors')]", $domHTML->documentElement);
       
-      foreach($nodes as $node){
-	    $name = trim($node->nodeValue);
+      //elimino autori ripetuti
+      $authorList = array();
+      for($i=0; $i<$nodes->length; $i++){
+	    if($nodes->item($i)->nodeValue == $nodes->item($i+1)->nodeValue){
+	      $i++;
+	    }else{
+	      $authorList[] = $nodes->item($i)->nodeValue;
+	    }
+      }
+      foreach($authorList as $name){
 	    //fix degli utenti che danno problemi
 	    require_once('common.php');
 	    $name = fixUser($name);

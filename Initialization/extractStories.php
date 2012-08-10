@@ -544,9 +544,17 @@ function extractContent($ref, $db, $dom, $domHTML, $info){
       
       //scorro tutti gli autori e li aggungo
       $nodes = $xpath->query("//a[contains(@href,'authors')]", $domHTML->documentElement);
-	    
-      foreach($nodes as $node){
-	$name = trim($node->nodeValue);
+      
+      //elimino autori ripetuti
+      $authorList = array();
+      for($i=0; $i<$nodes->length; $i++){
+	    if($nodes->item($i)->nodeValue == $nodes->item($i+1)->nodeValue){
+	      $i++;
+	    }else{
+	      $authorList[] = $nodes->item($i)->nodeValue;
+	    }
+      }
+      foreach($authorList as $name){
 	//fix degli utenti che danno problemi
 	require_once('common.php');
 	$name = fixUser($name);

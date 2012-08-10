@@ -17,8 +17,7 @@ function fixUser($name){
     if($name == "Steven B Wilson"){ $name = "Steven B. Wilson";}
     if($name == "Joe Not Charles"){ $name = "Joenotcharles";}
     if($name == "JTR"){ $name = "Old Dawg";}
-    if($name == "Ville V Lähde"){ $name = "Ville Lahde";}
-    if($name == "Ville Lähde"){ $name = "Ville Lahde";}
+    if($name == "Ville V Lähde"){ $name = "Ville Lähde";}
     if($name == "Wolfgang Nickel"){ $name = "Wolfgang Neckel";}
     if($name == "Larry Lamb"){ $name = "Larry E. Lamb";}
     if($name == "Luke Maximillian McCal"){ $name = "L. Maximillian McCal";}
