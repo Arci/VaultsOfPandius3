@@ -27,13 +27,15 @@ function log_in(){
 			  document.getElementById("logreg").innerHTML = '<ul>'+ 
 									    '<li><span>Welcome '+getText(aName[0])+'!<span></li>'+
 									    '<li id="liMyPage"><a href="UserPageCMS.php">MyPage</a></li>'+
+                                                                            '<li id="liUpload"><a href="uploadFile.php">Upload File</a></li>'+
 									    '<li id="liAdminPage"><a href="AdminPageCMS.php">AdminPage</a></li>'+
 									    '<li><a id="aLogout" href="#" onclick="logout()">Logout</a></li>'+
 									'</ul>';
 		      } else {
 			  document.getElementById("logreg").innerHTML = '<ul>'+ 
 									    '<li><span>Welcome '+getText(aName[0])+'!<span></li>'+
-									    '<li id="liMyPage"><a href="UserPageCMS.php">MyPage</a></li>'+    
+									    '<li id="liMyPage"><a href="UserPageCMS.php">MyPage</a></li>'+
+                                                                            '<li id="liUpload"><a href="uploadFile.php">Upload File</a></li>'+                                                                     
 									    '<li><a id="aLogout" href="#" onclick="logout()">Logout</a></li>'+
 									'</ul>';
 		      }      

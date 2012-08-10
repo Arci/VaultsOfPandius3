@@ -35,5 +35,3 @@ function cleanIndexTable($db){
     $sql="DELETE from content_page_author where contentPage=0";
     mysql_query($sql, $db);
 }
-
-?>

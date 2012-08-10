@@ -30,11 +30,11 @@
             if (isset($_SESSION['id'])) {
                 echo '<ul>
 				    <li><span>Welcome ' . $_SESSION['name'] . '!<span></li>' .
-                '<li id="liMyPage"><a href="UserPageCMS.php">MyPage</a></li>';
+                '<li id="liMyPage"><a href="UserPageCMS.php">MyPage</a></li>
+		<li id="liUpload"><a href="uploadFile.php">Upload File</a></li>';
                 if ($_SESSION['access_level'] == 3) {
                     echo '<li id="liAdminPage"><a href="AdminPageCMS.php">AdminPage</a></li>';
                 }
-		echo '<li id="liUpload"><a href="uploadFile.php">Upload File</a></li>';
                 echo '<li><a id="aLogout" href="#" onclick="logout()">Logout</a></li></ul>';
             } else {
 

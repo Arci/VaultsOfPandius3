@@ -177,6 +177,7 @@ http://www.w3.org/TR/html4/loose.dtd>
 		    document.getElementById("logreg").innerHTML = '<ul>'+ 
 								      '<li><span>Welcome '+getText(aName[0])+'!<span></li>'+
 								      '<li id="liMyPage"><a href="UserPageCMS.php">MyPage</a></li>'+
+								      '<li id="liUpload"><a href="uploadFile.php">Upload File</a></li>'+
 								      '<li><a id="aLogout" href="#" onclick="logout()">Logout</a></li>'+
 								  '</ul>';
 		} else {
