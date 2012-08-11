@@ -1186,19 +1186,31 @@ function explore($dom, $fatherElement, $fatherNode){
 		  } else {
 		  //o un nodo senza figli
 		    if ($childNode->nodeType != 8){
-		      //i commenti mi danno problemi quindi non li considero
-		      $childElement = $dom->createElement($childNode->nodeName);
-			  // aggiunta del campo src ai tag img
-			  if($childNode->nodeName == "img"){
-				foreach ($childNode->attributes as $attribute){
-				$childElement->setAttribute($attribute->name, "data/".$attribute->value);
+				//i commenti mi danno problemi quindi non li considero
+				$childElement = $dom->createElement($childNode->nodeName);
+				// aggiunta del campo src ai tag img
+				if($childNode->nodeName == "img"){
+					foreach ($childNode->attributes as $attribute){
+						$childElement->setAttribute($attribute->name, "data/".$attribute->value);
+					}
+					// incapsulo in <a> le immagini articolo che non lo sono
+					if($fatherElement->nodeName=="p" && $fatherNode->childNodes->length==1){
+						$aHref = $dom->createElement("a");
+						$aHref->setAttribute("href", $attribute->value);
+						$aHref->setAttribute("target", "_blank");
+						$childElement->setAttribute("style", "max-width:100%; max-height:100%;");
+						$aHref->appendChild($childElement);
+						$childElement = $aHref;
+					}
+					if($fatherElement->nodeName=="a"){
+						$fatherElement->setAttribute("target", "_blank");
+					}
 				}
-			  }
-			  $fatherElement->appendChild($childElement);
+				$fatherElement->appendChild($childElement);
 		    }
-		  }	     	      
-	      }  
-      }    
+		  }
+	      }
+      }
 }
 
 echo 'success';
