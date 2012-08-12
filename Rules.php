@@ -2,64 +2,51 @@
 http://www.w3.org/TR/html4/loose.dtd>
 <?php session_start(); ?>
 <html>
-<head>
-    <meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
-    <title>Vaults of Pandius Rules</title>
-    <link rel="stylesheet" href="Style/base.css"/>
-    <style type="text/css" media="all">@import "Style/style.css";</style>
-    <style>
-    
-	 #menu li#liRules a{
-		  color:white;
-	  }
-	  
-	  #content {
-	      overflow-y: scroll;
-	      height: 93%;
-	      padding-left:10px;
-	      padding-right:10px;
-	      margin-top:20px;
-	  }
-	
-	h3 {
-	    padding-left: inherit;
-	    margin-bottom: inherit;
-	}
+    <head>
+        <title>INDEX CMS</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <link rel="stylesheet" href="Style/base.css"/>
+        <link rel="stylesheet" href="Style/contenent.css"/>
 
-	h2 {
-	    padding-left: inherit;
-	    margin-bottom: inherit;
-	}
-	
-	#LoginMail{
-	    padding-left: 7%;
-	    margin-bottom: 0px;
-	}
-	
-	#LoginPassword{
-	    padding-left: 7%;
-	    margin-bottom: 0px;
-	}
-	
-	#content a {
-	    text-decoration:none;
-	    color:#08c;
-	    font-weight: bold;
-	  }
-	
-    </style>
-    <script type="text/javascript" src="zxml.js"></script>
-    <script type="text/javascript" src="Script/Xml.js"></script>
-    <script type="text/javascript" src="Script/Login.js"></script>
-    <script type="text/javascript" src="Script/Post.js"></script>
-</head>
-<body>
-  <?php include 'Banner.php' ?>  
-  <div id="mainStaticContent" class="shadowbox">
-    <div id=content >
-      <?php include 'RulesContent.html' ?> 
-    </div>
-  </div>
-  <?php include 'Footer.php' ?> 
-</body>
+        <script type="text/javascript" src="Script/zxml.js"></script>
+        <script type="text/javascript" src="Script/Xml.js"></script>
+        <script type="text/javascript" src="Script/Login.js"></script>
+        <script type="text/javascript" src="Script/Post.js"></script>
+        <script type="text/javascript" src="Script/contenent.js"></script>
+        <script type="text/javascript" src="Script/sections.js"></script>
+
+    </head>
+    <body onload="GetIndexLevel1('rules','menu1')">           
+
+        <?php include 'Banner.php' ?>
+        <div id="central">    
+            <div style="float: left; width: 30%;">
+                <div id="divMainIndex" class="shadowbox">
+                    <h3 id=section>Section</h3>
+                    <div class="hr"></div>
+                    <div id="menu1"></div>
+                </div>
+
+                <div id="divIndex" class="shadowbox" style="visibility:hidden">
+                    <h3>Index</h3> 
+                    <div class="hr"></div>
+                </div>	  
+            </div>
+            <div id="divContent" class="shadowbox" style="visibility: hidden">	    
+                <a href="#"><img id="img" src="images/zoom1.jpeg" class="shadowbox" onclick="zoomInContent()"/></a>
+                <a href="#"><img id="imgRight" style="visibility:hidden" src="images/arrow_right.png" class="shadowbox" onclick="forwardPage()"/></a>
+                <a href="#"><img id="imgLeft" style="visibility:hidden" src="images/arrow_left.png" class="shadowbox" onclick="backPage()"/></a>
+                <h2 id=title >Content</h2>
+                <div class="hr"></div>
+                <div id=author></div>
+                <div id=source></div>
+                <div id=date></div>
+                <div class="hr"></div>
+                <div id=content ></div>
+            </div>
+
+
+        </div>
+        <?php include 'Footer.php' ?>
+    </body>
 </html>

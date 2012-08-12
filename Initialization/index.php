@@ -10,6 +10,7 @@ Then activate the following commands in order:
 	<li><a href="./extractStories.php">Extract content (Stories)</a></li>
 	<li><a href="./extractAtlas.php">Extract content (Atlas)</a></li>
 	<li><a href="./extractResources.php">Extract content (Resources)</a></li>
+	<li><a href="./extractRules.php">Extract content (Rules)</a></li>
 <ol>
     <p>
 Finally, copy "db.php" to "Control/", and remove the Initialization folder.<br/>
