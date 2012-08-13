@@ -60,6 +60,8 @@ function extractFirstPage($iref, $db, $dom, $domHTML) {
     }
     mysql_free_result($result);
 
+	$id_target_index_page = $id_index_page + 1;
+	
     // sottosezione livello 1 nodi h1
     $nodes = $xpath->query("//h1[position()>1]", $domHTML->documentElement);
     for ($j=0; $j<$nodes->length; $j++) {
@@ -72,30 +74,19 @@ function extractFirstPage($iref, $db, $dom, $domHTML) {
                NULL,
                NULL)';
         mysql_query($sql, $db) or die(mysql_error($db));
-        $sql = 'SELECT id
-               FROM
-               index_page
-               WHERE
-               href="'.mysql_real_escape_string($iref.$j, $db).'"';
-        $result = mysql_query($sql, $db);
-        if (mysql_num_rows($result) == 1) {
-            //ok
-            $row = mysql_fetch_array($result);
-            $id_target_index_page = $row['id'];
-        }  else {
-            //errore
-        }
-        mysql_free_result($result);
-
+		
         $sql = 'INSERT IGNORE INTO index_2_content
                (id_start_index_page, id_target_index_page, link_name)
                VALUES
                ("'.$id_index_page.'",
-               "'.$id_target_index_page.'",
+               "'.($id_target_index_page+$j).'",
                "'.mysql_real_escape_string($singleNode->nodeValue, $db).'")';
         mysql_query($sql, $db) or die(mysql_error($db));
-		
-		$id_new_target_index_page = $id_target_index_page + 1;
+
+        if($id_new_target_index_page==null) {
+			echo "numero nodi h1: ".$nodes->length."</br>";
+            $id_new_target_index_page = $id_target_index_page + $nodes->length;
+        }
 
         echo $j."</br>";
         echo $singleNode->nodeValue."</br>";
@@ -112,16 +103,27 @@ function extractFirstPage($iref, $db, $dom, $domHTML) {
             }
             if($childNode->nodeName=="h2") {
                 echo "-level2: ".$childNode->nodeValue."</br>";
-				
+
                 // titolo di sottocategoria: salvo nell'indice
+                $sql = 'INSERT IGNORE INTO index_page
+                       (href, title, author, text)
+                       VALUES
+                       ("'.$iref.$j."-".$id_new_target_index_page.'",
+                       "'.mysql_real_escape_string($childNode->nodeValue, $db).'",
+                       NULL,
+                       NULL)';
+                mysql_query($sql, $db) or die(mysql_error($db));
+				
+				$childNode->nodeValue = str_replace("&","and",$childNode->nodeValue);
+				
                 $sql = 'INSERT IGNORE INTO index_2_content
                        (id_start_index_page, id_target_index_page, link_name)
                        VALUES
-                       ("'.$id_target_index_page.'",
+                       ("'.($id_target_index_page+$j).'",
                        "'.$id_new_target_index_page.'",
                        "'.mysql_real_escape_string($childNode->nodeValue, $db).'")';
-                mysql_query($sql, $db) or die(mysql_error($db));				
-				$id_new_target_index_page++;
+                mysql_query($sql, $db) or die(mysql_error($db));
+                $id_new_target_index_page++;
 
                 do {
                     $childNode = $childNode->nextSibling;
