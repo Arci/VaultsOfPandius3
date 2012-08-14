@@ -488,6 +488,7 @@ if (!isset($_SESSION['access_level']) || !$_SESSION['access_level'] == 2)
                         <div class="hr"></div>
                         <div id=authorView><i>Author:</i></div>
                         <div id=dateView><i>Date:</i></div>
+                        <div id=sourceView><i>Source:</i></div>
                         <div class="hr"></div>
                         <div id=contentView>
                         </div>

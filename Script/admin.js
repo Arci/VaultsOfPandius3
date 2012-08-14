@@ -370,7 +370,7 @@ function fillContent(id) {
         var title = document.getElementById("titleView");
         var date = document.getElementById("dateView");
         var author = document.getElementById("authorView");
-	var source = document.getElementById("source");
+	var source = document.getElementById("sourceView");
 	
         title.innerHTML = "";		
         date.innerHTML = "";
