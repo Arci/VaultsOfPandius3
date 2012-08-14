@@ -140,7 +140,7 @@ function extractIndex($iref, $db, $dom, $domHTML){
 	  foreach($list as $element){
 	    foreach($element as $article){
 	      if(strstr($article,$name)){
-		echo "list selected: ".$article."<br/>";
+		//echo "list selected: ".$article."<br/>";
 		$info = extractInfo($article,$name);
 	      }
 	    }
