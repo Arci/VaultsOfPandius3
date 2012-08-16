@@ -24,6 +24,8 @@ extractFirstPage('rules.html', $db, $dom, $domHTML);
 require_once('common.php');
 cleanIndexTable($db);
 
+echo "</br></br><b>FINISHPARSE</b>";
+
 //**************************************************************************************************************//
 
 function extractFirstPage($iref, $db, $dom, $domHTML) {
@@ -68,6 +70,8 @@ function extractFirstPage($iref, $db, $dom, $domHTML) {
     // indice partenza per nodi h2
     $id_new_target_index_page = -1;
 
+	// SOTTOSEZIONE PRINCIPALE
+	
     for ($j=0; $j<$nodes->length; $j++) {
         $singleNode = $nodes->item($j);
         $sql = 'INSERT IGNORE INTO index_page
@@ -93,115 +97,36 @@ function extractFirstPage($iref, $db, $dom, $domHTML) {
         }
 
         echo "</br></br>".$j."||</br>";
-        echo $singleNode->nodeValue."</br>";
         $nextNode = $singleNode;
         do {
             $nextNode = $nextNode->nextSibling;
         } while($nextNode->nodeName!="blockquote");
-        $nodeUpArtHref = true;
-        extractArticles($nextNode, $db, $dom, $domHTML, $id_target_index_page);
         for($z=0; $z<$nextNode->childNodes->length; $z++) {
             $childNode = $nextNode->childNodes->item($z);
-            if($childNode->nodeName=="a" && $nodeUpArtHref) {
-                echo "</br>-art: ".$childNode->nodeValue."</br>";
-                $nodeArtHref = false;
+			
+			// ESTRAZIONE ARTICOLI SOTTOSEZIONE PRINCIPALE
+			
+            if($childNode->nodeName=="a" && !$childNode->attributes->getNamedItem("name")) {
+                echo "-art: ".$childNode->nodeValue."</br>";
                 $artHref = $childNode->attributes->getNamedItem("href")->nodeValue;
                 $artName = $childNode->nodeValue;
-				$artText= "";
-            } else if($childNode->nodeName!="h2" || $z==($childNode->childNodes->length-1)) {
-                if($childNode->nodeName=="br") {
-                    if(strstr($artHref,".html")) {
-                        $info = extractInfo($artText, $artName);
-                        extractContent($artHref, $db, $dom, $domHTML, $info);
+
+                $z++;
+                $childNode = $nextNode->childNodes->item($z);
+                $artAuthor = array();
+                $w = -1;
+                $artText = "";
+                while(!strstr($childNode->nodeValue, ".")) {
+                    if($childNode->nodeName=="a") {
+                        $artAuthor[$w++] = $childNode->nodeValue;
                     } else {
-                        $info = extractInfo($artText, $artName);
-                        linkAtFile($artHref);
+                        $artText = $artText.$childNode->nodeValue;
                     }
-                    // ricavo idContent e lo aggiungo all'index_2_content
-                    $sql = 'SELECT id
-                           FROM
-                           content_page
-                           WHERE
-                           href="'.mysql_real_escape_string($artHref, $db).'"';
-                    $result = mysql_query($sql, $db);
-                    if (mysql_num_rows($result) == 1) {
-                        //ok
-                        $row = mysql_fetch_array($result);
-                        $id_content_page = $row['id'];
-                    }  else {
-                        //errore
-                    }
-                    mysql_free_result($result);
-                    $sql = 'INSERT IGNORE INTO index_2_content
-                           (id_start_index_page, id_target_content_page, link_name)
-                           VALUES
-                           ("'.$id_target_index_page.'",
-                           "'.$id_content_page.'",
-                           "'.mysql_real_escape_string($artName, $db).'")';
-                    mysql_query($sql, $db) or die(mysql_error($db));
-                    //fine articolo passo al successivo
-                    $nodeUpArtHref = true;
                     $z++;
-                } else {
-                    $artText = $artText.$childNode->nodeValue;
+                    $childNode = $nextNode->childNodes->item($z);
                 }
-            }
-            if($childNode->nodeName=="h2") {
-                echo "</br>-level2: ".$childNode->nodeValue."</br>";
+                $artText = $artText.$childNode->nodeValue;
 
-                // titolo di sottocategoria: salvo nell'indice
-                $id_new_target_index_page++;
-                $sql = 'INSERT IGNORE INTO index_page
-                       (href, title, author, text)
-                       VALUES
-                       ("'.$iref.$j."-".$id_new_target_index_page.'",
-                       "'.mysql_real_escape_string($childNode->nodeValue, $db).'",
-                       NULL,
-                       NULL)';
-                mysql_query($sql, $db) or die(mysql_error($db));
-
-                $childNode->nodeValue = str_replace("&","and",$childNode->nodeValue);
-
-                $sql = 'INSERT IGNORE INTO index_2_content
-                       (id_start_index_page, id_target_index_page, link_name)
-                       VALUES
-                       ("'.($id_target_index_page+$j).'",
-                       "'.$id_new_target_index_page.'",
-                       "'.mysql_real_escape_string($childNode->nodeValue, $db).'")';
-                mysql_query($sql, $db) or die(mysql_error($db));
-
-                do {
-                    $childNode = $childNode->nextSibling;
-                } while($childNode->nodeName!="blockquote");
-
-                // estrazione articoli livello h2
-                extractArticles($childNode, $db, $dom, $domHTML, $id_new_target_index_page);
-            }
-        }
-    }
-}
-
-function extractArticles($childNode, $db, $dom, $domHTML, $id_new_target_index_page) {
-    $nodeArtHref = true;
-    for($k=0; $k<$childNode->childNodes->length; $k++) {
-        $subChildNode = $childNode->childNodes->item($k);
-        if($subChildNode->nodeName=="a" && $nodeArtHref) {
-            echo "--art: ".$subChildNode->nodeValue."</br>";
-            $nodeArtHref = false;
-            $artHref = $subChildNode->attributes->getNamedItem("href")->nodeValue;
-            $artName = $subChildNode->nodeValue;
-            $artText = "";
-			$artAuthor = $subChildNode = $childNode->childNodes->item($k+1)->nodeValue;
-			
-			// ARTICOLI PROBLEMATICI PASSO AL SUCCESSIVO
-			if($artHref == "chron.html"){
-				while(!$subChildNode->nodeName=="br"){
-					$subChildNode = $childNode->childNodes->item($k++);
-				}
-				$subChildNode = $childNode->childNodes->item($k++);
-			}
-        } else {
-            if($subChildNode->nodeName=="br" || $k==($childNode->childNodes->length-1)) {
                 if(strstr($artHref,".html")) {
                     $info = extractInfo($artText, $artName);
                     extractContent($artHref, $db, $dom, $domHTML, $info);
@@ -221,30 +146,120 @@ function extractArticles($childNode, $db, $dom, $domHTML, $id_new_target_index_p
                     $row = mysql_fetch_array($result);
                     $id_content_page = $row['id'];
                 }  else {
-                    echo "errore inserimento art nel db";
+                    //errore
                 }
                 mysql_free_result($result);
                 $sql = 'INSERT IGNORE INTO index_2_content
                        (id_start_index_page, id_target_content_page, link_name)
                        VALUES
-                       ("'.$id_new_target_index_page.'",
+                       ("'.$id_target_index_page.'",
                        "'.$id_content_page.'",
                        "'.mysql_real_escape_string($artName, $db).'")';
                 mysql_query($sql, $db) or die(mysql_error($db));
-                //fine articolo passo al successivo
-                $nodeArtHref = true;
-                $k++;
-            } else {
-                $artText = $artText.$subChildNode->nodeValue;
+				
+            } else if($childNode->nodeName=="h2") {
+				
+				// SOTTOSEZIONE SECONDARIA
+				
+                echo "</br>-level2: ".$childNode->nodeValue."</br>";
+
+                $id_new_target_index_page++;
+                $sql = 'INSERT IGNORE INTO index_page
+                       (href, title, author, text)
+                       VALUES
+                       ("'.$iref.$j."-".$id_new_target_index_page.'",
+                       "'.mysql_real_escape_string($childNode->nodeValue, $db).'",
+                       NULL,
+                       NULL)';
+                mysql_query($sql, $db) or die(mysql_error($db));
+
+                // la ecommerciale da' problemi, non viene caricato il nodo
+                $childNode->nodeValue = str_replace("&","and",$childNode->nodeValue);
+
+                $sql = 'INSERT IGNORE INTO index_2_content
+                       (id_start_index_page, id_target_index_page, link_name)
+                       VALUES
+                       ("'.($id_target_index_page+$j).'",
+                       "'.$id_new_target_index_page.'",
+                       "'.mysql_real_escape_string($childNode->nodeValue, $db).'")';
+                mysql_query($sql, $db) or die(mysql_error($db));
+
+                do {
+                    $childNode = $childNode->nextSibling;
+                } while($childNode->nodeName!="blockquote");
+
+                // estrazione articoli livello h2
+                extractArticlesH2($childNode, $db, $dom, $domHTML, $id_new_target_index_page);
             }
         }
     }
+}
 
+function extractArticlesH2($nextNode, $db, $dom, $domHTML, $id_new_target_index_page) {
+    for($z=0; $z<$nextNode->childNodes->length; $z++) {
+        $childNode = $nextNode->childNodes->item($z);
+        if($childNode->nodeName=="a" && !$childNode->attributes->getNamedItem("name")) {
+            echo "-art: ".$childNode->nodeValue."</br>";
+            $artHref = $childNode->attributes->getNamedItem("href")->nodeValue;
+            $artName = $childNode->nodeValue;
+
+            $z++;
+            $childNode = $nextNode->childNodes->item($z);
+            $artAuthor = array();
+            $w = -1;
+            $artText = "";
+            while(!strstr($childNode->nodeValue, ".")) {
+                if($childNode->nodeName=="a") {
+                    $artAuthor[$w++] = $childNode->nodeValue;
+                } else {
+                    $artText = $artText.$childNode->nodeValue;
+                }
+                $z++;
+                $childNode = $nextNode->childNodes->item($z);
+            }
+            $artText = $artText.$childNode->nodeValue;
+			
+			// ARTICOLI BLOCCANTI
+			if($artHref == "chron.html"){
+				break;
+			}
+			
+            if(strstr($artHref,".html")) {
+                $info = extractInfo($artText, $artName);
+                extractContent($artHref, $db, $dom, $domHTML, $info);
+            } else {
+                $info = extractInfo($artText, $artName);
+                linkAtFile($artName, $artHref, $artAuthor, $info, $db);
+            }
+            // ricavo idContent e lo aggiungo all'index_2_content
+            $sql = 'SELECT id
+                   FROM
+                   content_page
+                   WHERE
+                   href="'.mysql_real_escape_string($artHref, $db).'"';
+            $result = mysql_query($sql, $db);
+            if (mysql_num_rows($result) == 1) {
+                //ok
+                $row = mysql_fetch_array($result);
+                $id_content_page = $row['id'];
+            }  else {
+                //errore
+            }
+            mysql_free_result($result);
+            $sql = 'INSERT IGNORE INTO index_2_content
+                   (id_start_index_page, id_target_content_page, link_name)
+                   VALUES
+                   ("'.$id_new_target_index_page.'",
+                   "'.$id_content_page.'",
+                   "'.mysql_real_escape_string($artName, $db).'")';
+            mysql_query($sql, $db) or die(mysql_error($db));
+        }
+    }
 }
 
 function linkAtFile($title, $ref, $author, $info, $db) {
-	$text = '<a href="'.$ref.'">LINK FILE<a>';
-	if($info['from'] != null && (strlen($info['from']) > 25) || strstr($info['from'],"by")) {
+    $text = '</br><a href="'.$ref.'">LINK FILE<a>';
+    if($info['from'] != null && (strlen($info['from']) > 25) || strstr($info['from'],"by")) {
         echo "FROM FIELD DELETED<br/>";
         $info['from'] = null;
     }
@@ -280,13 +295,34 @@ function linkAtFile($title, $ref, $author, $info, $db) {
                "'.mysql_real_escape_string($text, $db).'")';
     }
     mysql_query($sql, $db) or die(mysql_error($db));
-	$lastInseredContent = mysql_insert_id();
-	$sql = 'INSERT IGNORE INTO content_page_author
+    $lastInseredContent = mysql_insert_id();
+    foreach($author as $name) {
+        //fix degli utenti che danno problemi
+        require_once('common.php');
+        $name = fixUser($name);
+        $sql = 'SELECT id
+               FROM
+               users
+               WHERE
+               name="'.mysql_real_escape_string($name, $db).'"';
+        $result = mysql_query($sql, $db);
+
+        if (mysql_num_rows($result) == 1) {
+            //ok
+            $row = mysql_fetch_array($result);
+            $author = $row['id'];
+        }  else {
+            //errore
+        }
+        mysql_free_result($result);
+
+        $sql = 'INSERT IGNORE INTO content_page_author
                (contentPage, author)
                VALUES
                ("'.$lastInseredContent.'",
                "'.$author.'")';
         mysql_query($sql, $db) or die(mysql_error($db));
+    }
 }
 
 function extractInfo($article,$name) {
