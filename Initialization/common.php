@@ -53,7 +53,7 @@ function addAuthors($nodes, $db, $lastInseredContent){
 			insertAuthor($nodes->item($i)->nodeValue, $db, $lastInseredContent);
         }
     }
-    if($nodes->item($i)->nodeValue != $nodes->item($i++)->nodeValue) {
+    if($nodes->item($i)->nodeValue != $nodes->item($i-1)->nodeValue) {
 		insertAuthor($nodes->item($i)->nodeValue, $db, $lastInseredContent);
     }
     return;
