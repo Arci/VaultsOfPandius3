@@ -1011,42 +1011,9 @@ function extractContent($ref, $db, $dom, $domHTML, $info){
       //scorro tutti gli autori e li aggungo
       $nodes = $xpath->query("//a[contains(@href,'authors')]", $domHTML->documentElement);
       
-      //elimino autori ripetuti
-      $authorList = array();
-      for($i=0; $i<$nodes->length; $i++){
-	    if($nodes->item($i)->nodeValue == $nodes->item($i+1)->nodeValue){
-	      $i++;
-	    }else{
-	      $authorList[] = $nodes->item($i)->nodeValue;
-	    }
-      }
-      foreach($authorList as $name){
-	    //fix degli utenti che danno problemi
-	    require_once('common.php');
-	    $name = fixUser($name);
-	    $sql = 'SELECT id 
-	      FROM 
-		users 
-	      WHERE 
-		name="'.mysql_real_escape_string($name, $db).'"';
-	    $result = mysql_query($sql, $db);
-      
-	    if (mysql_num_rows($result) == 1) {
-		//ok
-		$row = mysql_fetch_array($result);
-		$author = $row['id'];
-	    }  else {
-		//errore    
-	    }
-	    mysql_free_result($result);
-
-	    $sql = 'INSERT IGNORE INTO content_page_author
-		(contentPage, author)
-		VALUES
-		("'.$lastInseredContent.'",
-		"'.$author.'")';
-	    mysql_query($sql, $db) or die(mysql_error($db));
-      }
+      //controlla autori ripetuti e inserisce nel db
+      require_once('common.php');
+   	  addAuthors($nodes, $db, $lastInseredContent);
     
       return true;
 }

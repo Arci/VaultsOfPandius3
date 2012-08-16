@@ -70,8 +70,8 @@ function extractFirstPage($iref, $db, $dom, $domHTML) {
     // indice partenza per nodi h2
     $id_new_target_index_page = -1;
 
-	// SOTTOSEZIONE PRINCIPALE
-	
+    // SOTTOSEZIONE PRINCIPALE
+
     for ($j=0; $j<$nodes->length; $j++) {
         $singleNode = $nodes->item($j);
         $sql = 'INSERT IGNORE INTO index_page
@@ -103,9 +103,9 @@ function extractFirstPage($iref, $db, $dom, $domHTML) {
         } while($nextNode->nodeName!="blockquote");
         for($z=0; $z<$nextNode->childNodes->length; $z++) {
             $childNode = $nextNode->childNodes->item($z);
-			
-			// ESTRAZIONE ARTICOLI SOTTOSEZIONE PRINCIPALE
-			
+
+            // ESTRAZIONE ARTICOLI SOTTOSEZIONE PRINCIPALE
+
             if($childNode->nodeName=="a" && !$childNode->attributes->getNamedItem("name")) {
                 echo "-art: ".$childNode->nodeValue."</br>";
                 $artHref = $childNode->attributes->getNamedItem("href")->nodeValue;
@@ -156,11 +156,11 @@ function extractFirstPage($iref, $db, $dom, $domHTML) {
                        "'.$id_content_page.'",
                        "'.mysql_real_escape_string($artName, $db).'")';
                 mysql_query($sql, $db) or die(mysql_error($db));
-				
+
             } else if($childNode->nodeName=="h2") {
-				
-				// SOTTOSEZIONE SECONDARIA
-				
+
+                // SOTTOSEZIONE SECONDARIA
+
                 echo "</br>-level2: ".$childNode->nodeValue."</br>";
 
                 $id_new_target_index_page++;
@@ -218,12 +218,12 @@ function extractArticlesH2($nextNode, $db, $dom, $domHTML, $id_new_target_index_
                 $childNode = $nextNode->childNodes->item($z);
             }
             $artText = $artText.$childNode->nodeValue;
-			
-			// ARTICOLI BLOCCANTI
-			if($artHref == "chron.html"){
-				break;
-			}
-			
+
+            // ARTICOLI BLOCCANTI
+            if($artHref == "chron.html") {
+                break;
+            }
+
             if(strstr($artHref,".html")) {
                 $info = extractInfo($artText, $artName);
                 extractContent($artHref, $db, $dom, $domHTML, $info);
@@ -456,42 +456,10 @@ function extractContent($ref, $db, $dom, $domHTML, $info) {
     //scorro tutti gli autori e li aggungo
     $nodes = $xpath->query("//a[contains(@href,'authors')]", $domHTML->documentElement);
 
-    //elimino autori ripetuti
-    $authorList = array();
-    for($i=0; $i<$nodes->length; $i++) {
-        if($nodes->item($i)->nodeValue == $nodes->item($i+1)->nodeValue) {
-            $i++;
-        } else {
-            $authorList[] = $nodes->item($i)->nodeValue;
-        }
-    }
-    foreach($authorList as $name) {
-        //fix degli utenti che danno problemi
-        require_once('common.php');
-        $name = fixUser($name);
-        $sql = 'SELECT id
-               FROM
-               users
-               WHERE
-               name="'.mysql_real_escape_string($name, $db).'"';
-        $result = mysql_query($sql, $db);
+    //controlla autori ripetuti e inserisce nel db
+    require_once('common.php');
+	addAuthors($nodes, $db, $lastInseredContent);
 
-        if (mysql_num_rows($result) == 1) {
-            //ok
-            $row = mysql_fetch_array($result);
-            $author = $row['id'];
-        }  else {
-            //errore
-        }
-        mysql_free_result($result);
-
-        $sql = 'INSERT IGNORE INTO content_page_author
-               (contentPage, author)
-               VALUES
-               ("'.$lastInseredContent.'",
-               "'.$author.'")';
-        mysql_query($sql, $db) or die(mysql_error($db));
-    }
     return true;
 }
 

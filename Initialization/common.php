@@ -35,3 +35,54 @@ function cleanIndexTable($db){
     $sql="DELETE from content_page_author where contentPage=0";
     mysql_query($sql, $db);
 }
+
+function addAuthors($nodes, $db, $lastInseredContent){
+	if($nodes->length==1){
+		echo $nodes->item(0)->nodeValue;
+		insertAuthor($nodes->item(0)->nodeValue, $db, $lastInseredContent);
+		return;
+	}
+	$authorList = array();
+    for($i=0; $i<($nodes->length-1); $i++) {
+        for($g=$i+1, $diff=0 ; $g<$nodes->length; $g++) {
+            if($nodes->item($i)->nodeValue != $nodes->item($g)->nodeValue) {
+                $diff++;
+            }
+        }
+        if($nodes->length-$diff==$i+1) {
+			insertAuthor($nodes->item($i)->nodeValue, $db, $lastInseredContent);
+        }
+    }
+    if($nodes->item($i)->nodeValue != $nodes->item($i++)->nodeValue) {
+		insertAuthor($nodes->item($i)->nodeValue, $db, $lastInseredContent);
+    }
+    return;
+}
+
+function insertAuthor($name, $db, $lastInseredContent){
+        //fix degli utenti che danno problemi
+        $name = fixUser($name);
+        $sql = 'SELECT id
+               FROM
+               users
+               WHERE
+               name="'.mysql_real_escape_string($name, $db).'"';
+        $result = mysql_query($sql, $db);
+
+        if (mysql_num_rows($result) == 1) {
+            //ok
+            $row = mysql_fetch_array($result);
+            $author = $row['id'];
+        }  else {
+            //errore
+        }
+        mysql_free_result($result);
+
+        $sql = 'INSERT IGNORE INTO content_page_author
+               (contentPage, author)
+               VALUES
+               ("'.$lastInseredContent.'",
+               "'.$author.'")';
+        mysql_query($sql, $db) or die(mysql_error($db));
+    }
+?>
