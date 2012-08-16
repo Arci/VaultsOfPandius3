@@ -144,9 +144,15 @@ $sql = 'INSERT IGNORE INTO access_levels
 mysql_query($sql, $db) or die(mysql_error($db));
 
 $sql = 'INSERT IGNORE INTO users 
-        (id, email, password, name, access_level)
+        (email, password, name, access_level)
     VALUES
-        (NULL, "admin@admin.com", PASSWORD("12345678"), "Administrator", 3)';
+        ("unknown@unknown.com", PASSWORD("12345678"), "Unknown", 1)';
+mysql_query($sql, $db) or die(mysql_error($db));
+
+$sql = 'INSERT IGNORE INTO users 
+        (email, password, name, access_level)
+    VALUES
+        ("admin@admin.com", PASSWORD("12345678"), "Administrator", 3)';
 mysql_query($sql, $db) or die(mysql_error($db));
 
 echo 'success';

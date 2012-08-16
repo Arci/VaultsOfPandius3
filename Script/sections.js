@@ -74,7 +74,7 @@ function linkTo(ref){
     date.innerHTML = "";
     source.innerHTML = "";
     var oXHR2 = zXmlHttp.createRequest();
-    oXHR2.open("get", "GetInfo.php?request=link&ref="+ref, true);
+    oXHR2.open("get", "Control/GetInfo.php?request=link&ref="+ref, true);
     oXHR2.onreadystatechange = function () {
         if (oXHR2.readyState == 4) {
             if (oXHR2.status == 200 || oXHR2.status == 304) {
@@ -187,7 +187,7 @@ function fillContentIndex(id){
     date.innerHTML = "";
     source.innerHTML = "";
     var oXHR2 = zXmlHttp.createRequest();
-    oXHR2.open("get", "GetInfo.php?request=index&id="+id, true);
+    oXHR2.open("get", "Control/GetInfo.php?request=index&id="+id, true);
     oXHR2.onreadystatechange = function () {
         if (oXHR2.readyState == 4) {
             if (oXHR2.status == 200 || oXHR2.status == 304) {

@@ -29,16 +29,14 @@ function fixUser($name){
     return $name;
 }
 
-function cleanIndexTable($db){
-    $sql="DELETE from index_page where (href!='resource.html' and menu='1' and href!='stories.html' and href!='adv_camp.html' and href!='atlas.html' and href!='rules.html') or menu='0'";
-    mysql_query($sql, $db);
-    $sql="DELETE from content_page_author where contentPage=0";
-    mysql_query($sql, $db);
-}
-
 function addAuthors($nodes, $db, $lastInseredContent){
+    if($nodes->length < 1){
+        echo "UNKNOWN AUTHOR<br/>";
+	insertAuthor("Unknown", $db, $lastInseredContent);
+	return;
+    }
 	if($nodes->length==1){
-		echo $nodes->item(0)->nodeValue;
+		echo $nodes->item(0)->nodeValue."<br/>";
 		insertAuthor($nodes->item(0)->nodeValue, $db, $lastInseredContent);
 		return;
 	}
@@ -84,5 +82,17 @@ function insertAuthor($name, $db, $lastInseredContent){
                ("'.$lastInseredContent.'",
                "'.$author.'")';
         mysql_query($sql, $db) or die(mysql_error($db));
-    }
+}
+
+function cleanIndexTable($db){
+    $sql="DELETE from index_page where (href!='resource.html' and menu='1' and href!='stories.html' and href!='adv_camp.html' and href!='atlas.html' and href!='rules.html') or menu='0'";
+    mysql_query($sql, $db);
+    $sql="DELETE from content_page_author where contentPage=0";
+    mysql_query($sql, $db);
+     $sql="UPDATE `content_page` SET `source` = 'the Mystara Message Board' WHERE `source` LIKE '%the%Mystara%Message%Board%'";
+    mysql_query($sql, $db);
+    $sql="UPDATE `content_page` SET `source` = 'the Mystara Mailing List' WHERE `source` LIKE '%the%Mystara%Mailing%List%'";
+    mysql_query($sql, $db);
+}
+
 ?>
