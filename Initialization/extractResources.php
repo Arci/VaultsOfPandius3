@@ -47,6 +47,8 @@ function extractIndex($iref, $db, $dom, $domHTML){
 	  $nodes = $xpath->query("//title", $domHTML->documentElement);
 	  $title = $nodes->item(0)->nodeValue;
       }
+      // la ecommerciale da' problemi, non viene caricato il nodo
+      $title = str_replace("&","and",$title);
       
       echo "<br/>-------------<br/>";
       echo "INDEX --> $iref<br/>"; 
@@ -318,7 +320,9 @@ function extractContent($ref, $db, $dom, $domHTML, $info){
       //$nodes = $xpath->query("//h2", $domHTML->documentElement);
       $nodes = $xpath->query("//title", $domHTML->documentElement);
       $title = $nodes->item(0)->nodeValue;
-
+      // la ecommerciale da' problemi, non viene caricato il nodo
+      $title = str_replace("&","and",$title);
+      
       //aggiungo l'articolo
       //filtro il campo from per eliminare falsi positivi
       if($info['from'] != null && (strlen($info['from']) > 33) || strstr($info['from'],"by")){
