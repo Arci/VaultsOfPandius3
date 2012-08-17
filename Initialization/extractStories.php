@@ -25,7 +25,8 @@ extractFirstPage('stories.html', $db, $dom, $domHTML);
 echo "----> ADVENTURES <----";
 extractFirstPage('adv_camp.html', $db, $dom, $domHTML);
 
-
+require_once('common.php');
+cleanDatabase($db);
 
 //**************************************************************************************************************//
 

@@ -21,6 +21,9 @@ $br = 4;
 echo "----> RULES <----";
 extractFirstPage('rules.html', $db, $dom, $domHTML);
 
+require_once('common.php');
+cleanDatabase($db);
+
 echo "</br></br><b>FINISHPARSE</b>";
 
 //**************************************************************************************************************//
