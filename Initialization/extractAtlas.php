@@ -22,8 +22,6 @@ $br = 4;
 echo "----> ATLAS <----<br/>";
 extractFirstPage('atlas.html', $db, $dom, $domHTML);
 
-require_once('common.php');
-cleanIndexTable($db);
 
 
 //**************************************************************************************************************//

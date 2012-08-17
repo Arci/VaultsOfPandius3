@@ -22,11 +22,10 @@ $br = 4;
 echo "----> RESOURCES <----";
 extractIndex('resource.html', $db, $dom, $domHTML);
 
-require_once('common.php');
-cleanIndexTable($db);
 
 
 //**************************************************************************************************************//
+
 
 
 function extractIndex($iref, $db, $dom, $domHTML){

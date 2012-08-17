@@ -21,12 +21,11 @@ $br = 4;
 echo "----> RULES <----";
 extractFirstPage('rules.html', $db, $dom, $domHTML);
 
-require_once('common.php');
-cleanIndexTable($db);
-
 echo "</br></br><b>FINISHPARSE</b>";
 
 //**************************************************************************************************************//
+
+
 
 function extractFirstPage($iref, $db, $dom, $domHTML) {
     $dom = new DomDocument();
@@ -162,20 +161,21 @@ function extractFirstPage($iref, $db, $dom, $domHTML) {
                 // SOTTOSEZIONE SECONDARIA
 
                 echo "</br>-level2: ".$childNode->nodeValue."</br>";
-
-                $id_new_target_index_page++;
-                $sql = 'INSERT IGNORE INTO index_page
-                       (href, title, author, text)
-                       VALUES
-                       ("'.$iref.$j."-".$id_new_target_index_page.'",
-                       "'.mysql_real_escape_string($childNode->nodeValue, $db).'",
-                       NULL,
-                       NULL)';
-                mysql_query($sql, $db) or die(mysql_error($db));
-
-                // la ecommerciale da' problemi, non viene caricato il nodo
+				
+				// la ecommerciale da' problemi, non viene caricato il nodo
                 $childNode->nodeValue = str_replace("&","and",$childNode->nodeValue);
-
+				
+				// AGGIUNTA ALL'INDEXPAGE PER IL VIEW INDEX
+                $id_new_target_index_page++;
+				$sql = 'INSERT IGNORE INTO index_page
+						(href, title, author, text)
+                        VALUES
+                        ("'.$iref.$j."-".$id_new_target_index_page.'",
+						"'.mysql_real_escape_string($childNode->nodeValue, $db).'",
+						NULL,
+						NULL)';
+                mysql_query($sql, $db) or die(mysql_error($db));
+				
                 $sql = 'INSERT IGNORE INTO index_2_content
                        (id_start_index_page, id_target_index_page, link_name)
                        VALUES

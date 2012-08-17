@@ -91,16 +91,4 @@ function insertAuthor($name, $db, $lastInseredContent){
                "'.$author.'")';
         mysql_query($sql, $db) or die(mysql_error($db));
 }
-
-function cleanIndexTable($db){
-    $sql="DELETE from index_page where (href!='resource.html' and menu='1' and href!='stories.html' and href!='adv_camp.html' and href!='atlas.html' and href!='rules.html') or menu='0'";
-    mysql_query($sql, $db);
-    $sql="DELETE from content_page_author where contentPage=0";
-    mysql_query($sql, $db);
-     $sql="UPDATE `content_page` SET `source` = 'the Mystara Message Board' WHERE `source` LIKE '%the%Mystara%Message%Board%'";
-    mysql_query($sql, $db);
-    $sql="UPDATE `content_page` SET `source` = 'the Mystara Mailing List' WHERE `source` LIKE '%the%Mystara%Mailing%List%'";
-    mysql_query($sql, $db);
-}
-
 ?>

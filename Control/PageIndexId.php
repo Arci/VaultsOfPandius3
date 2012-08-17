@@ -15,7 +15,7 @@ if (!isset($_GET['menu']))
 
 $xml = '<?xml version="1.0" encoding="utf-8"?><MENU>';
 if ($_GET['menu'] == 'home.html') {
-    $sql = "SELECT id, title from index_page";
+    $sql = "SELECT id, title from index_page where menu='1'";
 } else {
 
     $menu = $_GET['menu'];
