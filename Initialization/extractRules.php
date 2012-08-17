@@ -73,13 +73,28 @@ function extractFirstPage($iref, $db, $dom, $domHTML) {
 
     for ($j=0; $j<$nodes->length; $j++) {
         $singleNode = $nodes->item($j);
+
+        echo "</br></br>".$j."||</br>";
+        $nextNode = $singleNode;
+        do {
+            $nextNode = $nextNode->nextSibling;
+        } while($nextNode->nodeName!="blockquote");
+
+		$GLOBALS['br'] = 4;
+		$domInd = new DomDocument();
+		$p = $domInd->createElement("xml");
+		exploreIndex($domInd, $p, $nextNode);
+		$domInd->appendChild($p);
+        $text = $domInd->saveHTML();
+
         $sql = 'INSERT IGNORE INTO index_page
-               (href, title, author, text)
+               (id, href, title, author, text)
                VALUES
-               ("'.$iref.$j.'",
+			   ("'.($j+$id_index_page+1).'",
+               "'.$iref.$j.'",
                "'.mysql_real_escape_string($singleNode->nodeValue, $db).'",
                NULL,
-               NULL)';
+               "'.mysql_real_escape_string($text, $db).'")';
         mysql_query($sql, $db) or die(mysql_error($db));
 
         $sql = 'INSERT IGNORE INTO index_2_content
@@ -95,11 +110,6 @@ function extractFirstPage($iref, $db, $dom, $domHTML) {
             $id_new_target_index_page = $id_target_index_page + $nodes->length - 1;
         }
 
-        echo "</br></br>".$j."||</br>";
-        $nextNode = $singleNode;
-        do {
-            $nextNode = $nextNode->nextSibling;
-        } while($nextNode->nodeName!="blockquote");
         for($z=0; $z<$nextNode->childNodes->length; $z++) {
             $childNode = $nextNode->childNodes->item($z);
 
@@ -161,35 +171,43 @@ function extractFirstPage($iref, $db, $dom, $domHTML) {
                 // SOTTOSEZIONE SECONDARIA
 
                 echo "</br>-level2: ".$childNode->nodeValue."</br>";
-				
-				// la ecommerciale da' problemi, non viene caricato il nodo
+
+                // la ecommerciale da' problemi, non viene caricato il nodo
                 $childNode->nodeValue = str_replace("&","and",$childNode->nodeValue);
 				
-				// AGGIUNTA ALL'INDEXPAGE PER IL VIEW INDEX
-                $id_new_target_index_page++;
-				$sql = 'INSERT IGNORE INTO index_page
-						(href, title, author, text)
-                        VALUES
-                        ("'.$iref.$j."-".$id_new_target_index_page.'",
-						"'.mysql_real_escape_string($childNode->nodeValue, $db).'",
-						NULL,
-						NULL)';
-                mysql_query($sql, $db) or die(mysql_error($db));
+				$blockNode = $childNode;
+				do {
+                    $blockNode = $blockNode->nextSibling;
+                } while($blockNode->nodeName!="blockquote");
 				
+				$domInd = new DomDocument();
+				$p = $domInd->createElement("xml");
+				exploreIndex($domInd, $p, $blockNode);
+				$domInd->appendChild($p);
+				$text = $domInd->saveHTML();
+
+                // AGGIUNTA ALL'INDEXPAGE PER IL VIEW INDEX
+                $id_new_target_index_page++;
+                $sql = 'INSERT IGNORE INTO index_page
+                       (id, href, title, author, text)
+                       VALUES
+					   ("'.$id_new_target_index_page.'",
+                       "'.$iref.$j."-".$id_new_target_index_page.'",
+                       "'.mysql_real_escape_string($childNode->nodeValue, $db).'",
+                       NULL,
+                       "'.mysql_real_escape_string($text, $db).'")';
+                mysql_query($sql, $db) or die(mysql_error($db));
+
                 $sql = 'INSERT IGNORE INTO index_2_content
                        (id_start_index_page, id_target_index_page, link_name)
                        VALUES
                        ("'.($id_target_index_page+$j).'",
                        "'.$id_new_target_index_page.'",
                        "'.mysql_real_escape_string($childNode->nodeValue, $db).'")';
-                mysql_query($sql, $db) or die(mysql_error($db));
-
-                do {
-                    $childNode = $childNode->nextSibling;
-                } while($childNode->nodeName!="blockquote");
+                mysql_query($sql, $db) or die(mysql_error($db));                
 
                 // estrazione articoli livello h2
-                extractArticlesH2($childNode, $db, $dom, $domHTML, $id_new_target_index_page);
+                extractArticlesH2($blockNode, $db, $dom, $domHTML, $id_new_target_index_page);
             }
         }
     }
@@ -201,6 +219,9 @@ function extractArticlesH2($nextNode, $db, $dom, $domHTML, $id_new_target_index_
         if($childNode->nodeName=="a" && !$childNode->attributes->getNamedItem("name")) {
             echo "-art: ".$childNode->nodeValue."</br>";
             $artHref = $childNode->attributes->getNamedItem("href")->nodeValue;
+			
+			// la ecommerciale da' problemi, non viene caricato il nodo
+			$childNode->nodeValue = str_replace("&","and",$childNode->nodeValue);
             $artName = $childNode->nodeValue;
 
             $z++;
@@ -458,7 +479,7 @@ function extractContent($ref, $db, $dom, $domHTML, $info) {
 
     //controlla autori ripetuti e inserisce nel db
     require_once('common.php');
-	addAuthors($nodes, $db, $lastInseredContent);
+    addAuthors($nodes, $db, $lastInseredContent);
 
     return true;
 }
@@ -504,6 +525,61 @@ function explore($dom, $fatherElement, $fatherNode) {
                         }
                     }
                     $fatherElement->appendChild($childElement);
+                }
+            }
+        }
+    }
+}
+
+function exploreIndex($dom, $fatherElement, $fatherNode) {
+
+    foreach ($fatherNode->childNodes as $childNode) {
+        if ($childNode->nodeName != "center" && $childNode->nodeName != "small") {
+            if($childNode->hasChildNodes()) {
+                if ($childNode->nodeName == "a" && strpos("dkaj".$childNode->attributes->getNamedItem("href")->nodeValue, "authors.html")) {
+                    exploreIndex($dom, $fatherElement, $childNode);
+                    continue;
+                }
+                if ($childNode->nodeName == "a") {
+                    $childElement = $dom->createElement($childNode->nodeName);
+                    if($childNode->hasAttributes()) {
+                        foreach ($childNode->attributes as $attribute) {
+                            $childElement->setAttribute($attribute->name, "#");
+                            $childElement->setAttribute("onclick", "linkTo('".$attribute->value."'); return false");
+                        }
+                    }
+                    exploreIndex($dom, $childElement, $childNode);
+                    $fatherElement->appendChild($childElement);
+                } else {
+                    $childElement = $dom->createElement($childNode->nodeName);
+                    if($childNode->hasAttributes()) {
+                        foreach ($childNode->attributes as $attribute) {
+                            $childElement->setAttribute($attribute->name, $attribute->value);
+                        }
+                    }
+                    exploreIndex($dom, $childElement, $childNode);
+                    $fatherElement->appendChild($childElement);
+                }
+            } else {
+                //allora è un nodo testo
+                if ($childNode->nodeType == 3) { //costante del tipo testo
+                    $childElement = $dom->createTextNode($childNode->nodeValue);
+                    $fatherElement->appendChild($childElement);
+                } else {
+                    //o un nodo senza figli
+                    if ($childNode->nodeType != 8) {
+                        //i commenti mi danno problemi quindi non li considero
+                        if ($childNode->nodeName == "br") {
+                            $GLOBALS['br']--;
+                            if ($GLOBALS['br'] < 0) {
+                                $childElement = $dom->createElement($childNode->nodeName);
+                                $fatherElement->appendChild($childElement);
+                            }
+                        } else {
+                            $childElement = $dom->createElement($childNode->nodeName);
+                            $fatherElement->appendChild($childElement);
+                        }
+                    }
                 }
             }
         }
