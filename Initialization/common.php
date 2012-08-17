@@ -36,7 +36,7 @@ function addAuthors($nodes, $db, $lastInseredContent){
 	return;
     }
 	if($nodes->length==1){
-		echo $nodes->item(0)->nodeValue."<br/>";
+		// echo $nodes->item(0)->nodeValue."<br/>";
 		insertAuthor($nodes->item(0)->nodeValue, $db, $lastInseredContent);
 		return;
 	}

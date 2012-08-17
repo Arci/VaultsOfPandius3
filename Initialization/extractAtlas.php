@@ -319,12 +319,13 @@ function extractBlockquote($iref, $db, $dom, $domHTML){
       
       for ($j=0; $j<$nodes->length; $j++) {
 	//DEBUG: la seguente query sistemerebbe l'index di Aelos, ma salverebbe jpg e pdf come testo
-	//if($j==0)
-	//  $subNodes[]= $xpath->query("//blockquote/blockquote[position()=1]/a[(contains(@href,'html') or(contains(@href,'pdf')) or(contains(@href,'jpg'))) and not(contains(@href,'authors')) and not(contains(@href,'#'))]", $domHTML->documentElement);
-	//else
-	$subNodes[] = $xpath->query("//blockquote/blockquote[position()=".($j+1)."]/a[contains(@href,'html') and not(contains(@href,'authors')) and not(contains(@href,'#'))]", $domHTML->documentElement);
-	$nodesText[] = $xpath->query("//blockquote/blockquote[position()=".($j+1)."]", $domHTML->documentElement);	
+	  if($j==0){
+	  $subNodes[]= $xpath->query("//blockquote/blockquote[position()=1]/a[(contains(@href,'html') or(contains(@href,'pdf')) or(contains(@href,'jpg'))) and not(contains(@href,'authors')) and not(contains(@href,'#'))]", $domHTML->documentElement);
+	  } else {
+	  $subNodes[] = $xpath->query("//blockquote/blockquote[position()=".($j+1)."]/a[contains(@href,'html') and not(contains(@href,'authors')) and not(contains(@href,'#'))]", $domHTML->documentElement);
+	  $nodesText[] = $xpath->query("//blockquote/blockquote[position()=".($j+1)."]", $domHTML->documentElement);	
       }
+	  }
       
       $list = array();
       for ($j=0; $j<$nodes->length; $j++){
@@ -396,23 +397,32 @@ function extractBlockquote($iref, $db, $dom, $domHTML){
 	    $singleSubNode = $subNodes[$j]->item($z);  
 	    $ref = $singleSubNode->attributes->getNamedItem('href')->nodeValue;
 	    $name = $singleSubNode->nodeValue;
-	    //recupero informazioni from e date
-	    $info = array();
-	    foreach($list as $element){
-	      foreach($element as $article){
-		if(strstr($article,$name)){
-		  //echo "list selected: ".$article."<br/>";
-		  $info = extractInfo($article,$name);
+		
+		// estraggo autori e testo contenente from date per linkAtFile
+		$tmpNode = $subNodes[$j]->item($z);
+		$tmpNode = $tmpNode->nextSibling;
+		$artAuthor = array();
+		while(!strpos($tmpNode->nodeValue, ".")) {
+			if($tmpNode->nodeName=="a") {
+				$artAuthor[] = $tmpNode->nodeValue;
+			}
+			$tmpNode = $tmpNode->nextSibling;
 		}
-	      }
-	    }
+		$artText = $tmpNode->nodeValue;
+		
+	    $info = extractInfo($artText, $name);
 	    
 	    if (!(in_array($ref, $GLOBALS['global']))) {
 		  //inserisco il ref nell'array'
 		  $GLOBALS['global'][] = $ref;
 		  
+		  // L'ARTICOLO CHIAMA UN FILE E NON UNA PAGINA ALLORA LA CREO
+		  if(!strpos($ref, ".html")){
+			linkAtFile($name, $ref, $artAuthor, $info, $db, $id_target_index_page);
+		  }
+			
 		  // METTO QUI LA CHIAMATA A extractContentPage.php //
-		  if (extractContent($ref, $db, $dom, $domHTML, $info)){
+		  else if (extractContent($ref, $db, $dom, $domHTML, $info)){
 			    
 		      // *** LA PAGINA ESAMINATA SI è RIVELATA EFFETTIVAMENTE UNA PAGINA CONTENT ***
 		      // ottengo l'id della pagina content
@@ -474,6 +484,83 @@ function extractBlockquote($iref, $db, $dom, $domHTML){
 	    }
 	    //fine parte comune
       } 
+}
+
+function linkAtFile($title, $ref, $author, $info, $db, $id_target_index_page) {
+    $text = '</br><a href="'.$ref.'">LINK FILE<a>';
+    if($info['from'] != null && (strlen($info['from']) > 25) || strstr($info['from'],"by")) {
+        echo "FROM FIELD DELETED<br/>";
+        $info['from'] = null;
+    }
+    if($info['date'] != null && $info['from'] != null) {
+        $sql = 'INSERT IGNORE INTO content_page
+               (href, title, source, submit_date, publish_date, is_published, text)
+               VALUES
+               ("'.$ref.'",
+               "'.mysql_real_escape_string($title, $db).'",
+               "'.$info['from'].'",
+               "'.date('Y-m-d').'",
+               "'.$info['date'].'",
+               TRUE,
+               "'.mysql_real_escape_string($text, $db).'")';
+    } else if($info['date'] != null && $info['from'] == null) {
+        $sql = 'INSERT IGNORE INTO content_page
+               (href, title, submit_date, publish_date, is_published, text)
+               VALUES
+               ("'.$ref.'",
+               "'.mysql_real_escape_string($title, $db).'",
+               "'.date('Y-m-d').'",
+               "'.$info['date'].'",
+               TRUE,
+               "'.mysql_real_escape_string($text, $db).'")';
+    } else {
+        $sql = 'INSERT IGNORE INTO content_page
+               (href, title, submit_date, is_published, text)
+               VALUES
+               ("'.$ref.'",
+               "'.mysql_real_escape_string($title, $db).'",
+               "'.date('Y-m-d').'",
+               TRUE,
+               "'.mysql_real_escape_string($text, $db).'")';
+    }
+    mysql_query($sql, $db) or die(mysql_error($db));
+    $lastInseredContent = mysql_insert_id();
+    foreach($author as $name) {
+        //fix degli utenti che danno problemi
+        require_once('common.php');
+        $name = fixUser($name);
+        $sql = 'SELECT id
+               FROM
+               users
+               WHERE
+               name="'.mysql_real_escape_string($name, $db).'"';
+        $result = mysql_query($sql, $db);
+
+        if (mysql_num_rows($result) == 1) {
+            //ok
+            $row = mysql_fetch_array($result);
+            $author = $row['id'];
+        }  else {
+            //errore
+        }
+        mysql_free_result($result);
+
+        $sql = 'INSERT IGNORE INTO content_page_author
+               (contentPage, author)
+               VALUES
+               ("'.$lastInseredContent.'",
+               "'.$author.'")';
+        mysql_query($sql, $db) or die(mysql_error($db));
+    }
+
+	// ORA AGGIUNGO IL LINK TRA LE DUE PAGINE
+	$sql = 'INSERT IGNORE INTO index_2_content 
+	  (id_start_index_page, id_target_content_page, link_name)
+	VALUES
+	  ("'.$id_target_index_page.'",
+	  "'.$lastInseredContent.'",
+	  "'.mysql_real_escape_string($title, $db).'")';	
+	mysql_query($sql, $db) or die(mysql_error($db));
 }
 
 
