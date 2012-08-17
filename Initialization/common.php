@@ -35,12 +35,12 @@ function addAuthors($nodes, $db, $lastInseredContent){
 	insertAuthor("Unknown", $db, $lastInseredContent);
 	return;
     }
-	if($nodes->length==1){
-		// echo $nodes->item(0)->nodeValue."<br/>";
-		insertAuthor($nodes->item(0)->nodeValue, $db, $lastInseredContent);
-		return;
-	}
-	$authorList = array();
+    if($nodes->length==1){
+            echo $nodes->item(0)->nodeValue."<br/>";
+            insertAuthor($nodes->item(0)->nodeValue, $db, $lastInseredContent);
+            return;
+    }
+    $authorList = array();
     for($i=0; $i<($nodes->length-1); $i++) {
         for($g=$i+1, $diff=0 ; $g<$nodes->length; $g++) {
             if($nodes->item($i)->nodeValue != $nodes->item($g)->nodeValue) {
@@ -48,10 +48,18 @@ function addAuthors($nodes, $db, $lastInseredContent){
             }
         }
         if($nodes->length-$diff==$i+1) {
+                        echo $nodes->item($i)->nodeValue."<br/>";
 			insertAuthor($nodes->item($i)->nodeValue, $db, $lastInseredContent);
+        }
+        //se all'ultimo giro non ci sono differenze è un array di autori ugulai
+        //ne aggiungo uno
+        if($i == ($nodes->length-2 ) && $diff == 0){
+            echo $nodes->item(0)->nodeValue."<br/>";
+            insertAuthor($nodes->item($i)->nodeValue, $db, $lastInseredContent);
         }
     }
     if($nodes->item($i)->nodeValue != $nodes->item($i-1)->nodeValue) {
+        	echo $nodes->item($i)->nodeValue."<br/>";
 		insertAuthor($nodes->item($i)->nodeValue, $db, $lastInseredContent);
     }
     return;
