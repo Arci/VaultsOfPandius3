@@ -22,7 +22,8 @@ h1 {
 
 #content {
     overflow-y: scroll;
-    height: 76%;
+	height: inherit;
+	min-height:60%;
     padding-left:10px;
     padding-right:10px;
 }
