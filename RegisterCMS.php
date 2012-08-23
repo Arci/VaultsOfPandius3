@@ -21,7 +21,7 @@ http://www.w3.org/TR/html4/loose.dtd>
 	  #divStatus {   
 	      float:right;
 	      width:20%;
-	      height:40%;
+	      height:50%;
 	  }
 	  
 	  #divConfirm {   
@@ -192,11 +192,13 @@ http://www.w3.org/TR/html4/loose.dtd>
     
     function saveResult(sResult, sMessage) {	      
 	document.getElementById("divStatus").removeAttribute("style");
+	document.getElementById("divContent").style.display="none";
 	document.getElementById("status").innerHTML = sMessage;            
     }
     
     function saveConfirm(sResult, sMessage, sName) {
 	document.getElementById("divConfirm").removeAttribute("style");
+	document.getElementById("divStatus").style.display="none";
 	document.getElementById("h2confirm").innerHTML = sResult;
 	document.getElementById("confirm").innerHTML = sMessage + '<p>You are now logged as '+
 					      '<span style=\"color:#08c; font-weight:bold\">'+sName+'</span></p>';
@@ -211,7 +213,7 @@ http://www.w3.org/TR/html4/loose.dtd>
 	  <h2 id=h2content><span style="color:#08c">Step 1 -</span> Create Account</h2>
 	  <div class="hr"></div>
 	  <div id="content">
-	      <form id="requestForm" method="post" action="Control/UserControl.php">		  
+	      <form id="requestForm" method="post" action="Control/UserControl.php" onsubmit="sendRequest(); return false";>		  
 		  <div id="divName">
 		      <h3>Name</h3>
 		      <div class="hr"></div>
@@ -237,7 +239,7 @@ http://www.w3.org/TR/html4/loose.dtd>
 	      </form>
 	  </div>	  
       </div>
-      <div id="divStatus" class="shadowbox" style="visibility:hidden">
+      <div id="divStatus" class="shadowbox" style="display:none">
 	  <h2 id=h2status><span style="color:#08c">Step 2 -</span> Confirm</h2>
 	  <div class="hr"></div>
 	  <div id="status">		      	
@@ -250,7 +252,7 @@ http://www.w3.org/TR/html4/loose.dtd>
 	      </form>
 	  </div>
       </div>
-      <div id="divConfirm" class="shadowbox" style="visibility:hidden">
+      <div id="divConfirm" class="shadowbox" style="display:none">
 	  <h2 id=h2confirm>Esito</h2>
 	  <div class="hr"></div>
 	  <div id="confirm">

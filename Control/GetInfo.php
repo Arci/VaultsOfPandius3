@@ -52,7 +52,7 @@
 		      index_page.id="'.$sID.'"';
 		$result = mysql_query($sql, $db);
 		while ($row = mysql_fetch_array($result)) {	      		
-		    $sResponse .= '<AUTHOR>-</AUTHOR>';
+		    $sResponse .= '<AUTHOR>Unknown</AUTHOR>';
 		    $sResponse .= '<TITLE>'.$row['title'].'</TITLE>';
 		}
 	    }
@@ -147,7 +147,7 @@
 			      index_page.href="'.$sRef.'"';
 			$result = mysql_query($sql, $db);
 			while ($row = mysql_fetch_array($result)) {	      		
-			    $sResponse .= '<AUTHOR>-</AUTHOR>';
+			    $sResponse .= '<AUTHOR>Unknown</AUTHOR>';
 			    $sResponse .= '<TITLE>'.$row['title'].'</TITLE>';
 			}
 		    }
