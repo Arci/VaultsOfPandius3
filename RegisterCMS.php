@@ -192,12 +192,14 @@ http://www.w3.org/TR/html4/loose.dtd>
     
     function saveResult(sResult, sMessage) {	      
 	document.getElementById("divStatus").removeAttribute("style");
+	document.getElementById("divStatus").style.float="left";
 	document.getElementById("divContent").style.display="none";
 	document.getElementById("status").innerHTML = sMessage;            
     }
     
     function saveConfirm(sResult, sMessage, sName) {
 	document.getElementById("divConfirm").removeAttribute("style");
+	document.getElementById("divConfirm").style.float="left";
 	document.getElementById("divStatus").style.display="none";
 	document.getElementById("h2confirm").innerHTML = sResult;
 	document.getElementById("confirm").innerHTML = sMessage + '<p>You are now logged as '+
