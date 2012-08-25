@@ -867,7 +867,7 @@ function extractIndex($iref, $db, $dom, $domHTML){
       mysql_free_result($result);
 
             
-      $nodes = $xpath->query("//a[contains(@href,'html') and not(contains(@href,'authors')) and not(contains(@href,'#'))]", $domHTML->documentElement);
+      $nodes = $xpath->query("//a[(contains(@href,'html') or contains(@href,'jpg') or contains(@href,'gif') or contains(@href,'pdf')) and not(contains(@href,'authors')) and not(contains(@href,'#'))]", $domHTML->documentElement);
       
       if (($iref == 'stories.html')or($iref == 'atlas.html')or($iref == 'resource.html')or($iref == 'adv_camp.html')) 
 	  {$start=8;} else {$start=9;}
@@ -876,24 +876,35 @@ function extractIndex($iref, $db, $dom, $domHTML){
 	  $singleNode = $nodes->item($i);  
 	  $ref = $singleNode->attributes->getNamedItem('href')->nodeValue;
 	  $name = $singleNode->nodeValue;
-	  //recupero informazioni from e date
-	  foreach($list as $element){
-	    foreach($element as $article){
-	      if(strstr($article,$name)){
-		//echo "list selected: ".$article."<br/>";
-		$info = array();
-		$info = extractInfo($article,$name);
-	      }
-	    }
+	  
+	  // estraggo autori e testo contenente from date per linkAtFile
+	  $tmpNode = $nodes->item($i);
+	  $tmpNode = $tmpNode->nextSibling;
+	  $artAuthor = array();
+	  while(!strpos($tmpNode->nodeValue, ".") && $tmpNode!=null) {
+		if($tmpNode->nodeName=="a") {
+			$artAuthor[] = $tmpNode->nodeValue;
+		}
+		$tmpNode = $tmpNode->nextSibling;
 	  }
+	  $artText = $tmpNode->nodeValue;
+	  $info = extractInfo($artText, $name);
 	  
 	  if (!(in_array($ref, $GLOBALS['global']))) {
 		
 		//inserisco il ref nell'array'
 		$GLOBALS['global'][] = $ref;
 		
+		// L'ARTICOLO CHIAMA UN FILE E NON UNA PAGINA ALLORA LA CREO
+		if(!strpos($ref, ".html")){
+			if($name=="map"){
+				$name = $name.$nodes->item($i)->nextSibling->nodeValue;
+			}
+			linkAtFile($name, $ref, $artAuthor, $info, $db, $id_index_page);
+		}
+		
 		// METTO QUI LA CHIAMATA A extractContentPage.php //
-		if (extractContent($ref, $db, $dom, $domHTML,$info)){
+		else if (extractContent($ref, $db, $dom, $domHTML,$info)){
 			  
 		    // *** LA PAGINA ESAMINATA SI è RIVELATA EFFETTIVAMENTE UNA PAGINA CONTENT ***
 		    // ottengo l'id della pagina content
