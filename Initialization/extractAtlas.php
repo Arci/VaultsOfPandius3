@@ -876,19 +876,31 @@ function extractIndex($iref, $db, $dom, $domHTML){
 	  $singleNode = $nodes->item($i);  
 	  $ref = $singleNode->attributes->getNamedItem('href')->nodeValue;
 	  $name = $singleNode->nodeValue;
-	  
+	  if(strpos($ref, ".html")){
+	  //recupero informazioni from e date per extractContent
+		  foreach($list as $element){
+			foreach($element as $article){
+			  if(strstr($article,$name)){
+			//echo "list selected: ".$article."<br/>";
+			$info = array();
+			$info = extractInfo($article,$name);
+			  }
+			}
+		  }
+	  } else {
 	  // estraggo autori e testo contenente from date per linkAtFile
-	  $tmpNode = $nodes->item($i);
-	  $tmpNode = $tmpNode->nextSibling;
-	  $artAuthor = array();
-	  while(!strpos($tmpNode->nodeValue, ".") && $tmpNode!=null) {
-		if($tmpNode->nodeName=="a") {
-			$artAuthor[] = $tmpNode->nodeValue;
-		}
-		$tmpNode = $tmpNode->nextSibling;
+		  $tmpNode = $nodes->item($i);
+		  $tmpNode = $tmpNode->nextSibling;
+		  $artAuthor = array();
+		  while($tmpNode!=null && !strpos($tmpNode->nodeValue, ".")) {
+			if($tmpNode->nodeName=="a") {
+				$artAuthor[] = $tmpNode->nodeValue;
+			}
+			$tmpNode = $tmpNode->nextSibling;
+		  }
+		  $artText = $tmpNode->nodeValue;
+		  $info = extractInfo($artText, $name);
 	  }
-	  $artText = $tmpNode->nodeValue;
-	  $info = extractInfo($artText, $name);
 	  
 	  if (!(in_array($ref, $GLOBALS['global']))) {
 		
