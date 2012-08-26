@@ -1047,7 +1047,7 @@ function extractContent($ref, $db, $dom, $domHTML, $info){
       
       
       //se non ci sono <p> allora mi trovo in una index page e quindi devo chiamare la extractIndex e terminare
-      if ( (($nodes->length <= 1) and ($nodesA->length >= 11)) or ( ($nodes->length >= 2) and ((($nodesA->length) >= 5* ($nodes->length)))) ){
+      if ( (($nodes->length <= 1) and ($nodesA->length >= 9)) or ( ($nodes->length >= 2) and ((($nodesA->length) >= 5* ($nodes->length)))) ){
 	  
 //	  echo 'INDEX: P = '.$nodes->length.', A = '.$nodesA->length.' --> '.$ref.'<br/>';
 	  
